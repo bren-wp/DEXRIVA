@@ -24,3 +24,7 @@
 - Performance benchmarks with large APKs, memory pressure and regression fixtures.
 
 The checklist is aspirational until implemented, tested, and shipped. Keep jadx namespaces and API compatibility initially.
+
+## Android APK Inspector (new scope)
+
+Android edition is **not** a JVM desktop port. Build it as a separate, isolated Android project using Kotlin + Jetpack Compose, the Android Storage Access Framework and streaming ZIP header enumeration. Respect Android-scoped storage and minSdk >= 24. Never execute, unpack or upload unknown APK data. Implement manifest parsing, signing certificate status (using Android SDK facilities where appropriate) and hash reports only after unit and instrumented tests. Do not market inspection findings as malware verdicts. The Android binary is not included in DEXRIVA Windows v1.0.0.

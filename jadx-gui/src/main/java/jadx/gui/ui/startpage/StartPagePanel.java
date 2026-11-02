@@ -2,6 +2,10 @@ package jadx.gui.ui.startpage;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -58,11 +62,22 @@ public class StartPagePanel extends ContentPanel {
 
 		JPanel start = new JPanel();
 		start.setBorder(sectionFrame(NLS.str("start_page.start"), baseFont));
-		start.setLayout(new BoxLayout(start, BoxLayout.LINE_AXIS));
+		start.setLayout(new GridLayout(1, 2, 12, 12));
 		start.add(openFile);
-		start.add(Box.createRigidArea(new Dimension(10, 0)));
 		start.add(openProject);
-		start.add(Box.createHorizontalGlue());
+		start.addComponentListener(new ComponentAdapter() {
+			private boolean stacked;
+
+			@Override
+			public void componentResized(ComponentEvent event) {
+				boolean nextStacked = start.getWidth() < 430;
+				if (nextStacked != stacked) {
+					stacked = nextStacked;
+					start.setLayout(new GridLayout(stacked ? 2 : 1, stacked ? 1 : 2, 12, 12));
+					start.revalidate();
+				}
+			}
+		});
 
 		this.recentListModel = new DefaultListModel<>();
 		this.recentList = new RecentProjectsJList(recentListModel);
@@ -166,6 +181,7 @@ public class StartPagePanel extends ContentPanel {
 		brandHeader.setLayout(new BoxLayout(brandHeader, BoxLayout.PAGE_AXIS));
 		JLabel brandTitle = new JLabel("DEXRIVA");
 		brandTitle.setAlignmentX(LEFT_ALIGNMENT);
+		brandTitle.setForeground(new Color(0x34D9D0));
 		brandTitle.setFont(baseFont.deriveFont(Font.BOLD, Math.max(22f, baseFont.getSize2D() * 2f)));
 		JLabel brandSubtitle = new JLabel("Explore beyond the source.  |  Offline Android analysis");
 		brandSubtitle.setAlignmentX(LEFT_ALIGNMENT);
@@ -176,11 +192,11 @@ public class StartPagePanel extends ContentPanel {
 		brandHeader.add(start);
 		center.add(brandHeader, BorderLayout.PAGE_START);
 		center.add(recent, BorderLayout.CENTER);
-		center.setMaximumSize(new Dimension(700, 600));
+		center.setMaximumSize(new Dimension(800, 700));
 		center.setAlignmentX(CENTER_ALIGNMENT);
 
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
+		setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 		add(Box.createVerticalGlue());
 		add(center);
 		add(Box.createVerticalGlue());

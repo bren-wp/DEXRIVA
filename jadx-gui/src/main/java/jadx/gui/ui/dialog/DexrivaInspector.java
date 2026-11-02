@@ -1,6 +1,11 @@
 package jadx.gui.ui.dialog;
 
 import java.awt.Component;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.IOException;
@@ -11,7 +16,14 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
+import javax.swing.SwingUtilities;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -29,29 +41,90 @@ public final class DexrivaInspector {
     private DexrivaInspector() {
     }
 
+    /**
+     * Scalable, non-modal inspector workspace. ZIP enumeration runs off the Swing event thread.
+     */
     public static void open(Component parent) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("DEXRIVA | Inspect Android package");
-        chooser.setFileFilter(new FileNameExtensionFilter(
-                "Android archives (*.apk, *.aab, *.apks, *.apkm, *.xapk, *.zip)",
-                "apk", "aab", "apks", "apkm", "xapk", "zip"));
-        if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        try {
-            String report = inspect(chooser.getSelectedFile().toPath());
-            JTextArea area = new JTextArea(report);
-            area.setEditable(false);
-            area.setCaretPosition(0);
-            area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-            JScrollPane scroll = new JScrollPane(area);
-            scroll.setPreferredSize(new Dimension(680, 440));
-            JOptionPane.showMessageDialog(parent, scroll, "DEXRIVA APK Inspector",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException | SecurityException e) {
-            JOptionPane.showMessageDialog(parent, "Cannot inspect archive: " + e.getMessage(),
-                    "DEXRIVA APK Inspector", JOptionPane.ERROR_MESSAGE);
-        }
+        JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(parent),
+                "DEXRIVA | APK Inspector", Dialog.ModalityType.MODELESS);
+        JPanel content = new JPanel(new BorderLayout(0, 16));
+        content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JLabel title = new JLabel("APK INSPECTOR");
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 23f));
+        JLabel subtitle = new JLabel("Private local analysis of Android package archives");
+        JPanel header = new JPanel(new BorderLayout(0, 6));
+        header.add(title, BorderLayout.NORTH);
+        header.add(subtitle, BorderLayout.SOUTH);
+        content.add(header, BorderLayout.NORTH);
+
+        JTextArea report = new JTextArea("Choose an APK, AAB, APKS, APKM, XAPK or ZIP to inspect.\n"
+                + "ZIP metadata is read locally and no files are extracted or uploaded.");
+        report.setEditable(false);
+        report.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+        report.setMargin(new java.awt.Insets(14, 14, 14, 14));
+        JScrollPane scroll = new JScrollPane(report);
+        content.add(scroll, BorderLayout.CENTER);
+
+        JButton choose = new JButton("Open package");
+        JButton copy = new JButton("Copy report");
+        copy.setEnabled(false);
+        JButton close = new JButton("Close");
+        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
+        controls.add(choose);
+        controls.add(copy);
+        controls.add(close);
+        content.add(controls, BorderLayout.SOUTH);
+
+        choose.addActionListener(event -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("DEXRIVA | Choose Android package");
+            chooser.setFileFilter(new FileNameExtensionFilter(
+                    "Android packages (*.apk, *.aab, *.apks, *.apkm, *.xapk, *.zip)",
+                    "apk", "aab", "apks", "apkm", "xapk", "zip"));
+            if (chooser.showOpenDialog(dialog) != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+            Path path = chooser.getSelectedFile().toPath();
+            report.setText("Inspecting " + path.getFileName() + "...");
+            choose.setEnabled(false);
+            copy.setEnabled(false);
+            new SwingWorker<String, Void>() {
+                @Override
+                protected String doInBackground() throws IOException {
+                    return inspect(path);
+                }
+
+                @Override
+                protected void done() {
+                    choose.setEnabled(true);
+                    if (!dialog.isDisplayable()) {
+                        return;
+                    }
+                    try {
+                        report.setText(get());
+                        report.setCaretPosition(0);
+                        copy.setEnabled(true);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        report.setText("Inspection interrupted.");
+                    } catch (java.util.concurrent.ExecutionException e) {
+                        report.setText("Cannot inspect archive: " + e.getCause().getMessage());
+                    }
+                }
+            }.execute();
+        });
+
+        copy.addActionListener(event -> Toolkit.getDefaultToolkit().getSystemClipboard()
+                .setContents(new StringSelection(report.getText()), null));
+        close.addActionListener(event -> dialog.dispose());
+
+        dialog.setContentPane(content);
+        dialog.setMinimumSize(new Dimension(420, 330));
+        dialog.setSize(820, 600);
+        dialog.setLocationRelativeTo(parent);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
     }
 
     public static String inspect(Path path) throws IOException {

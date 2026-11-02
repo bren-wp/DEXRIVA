@@ -87,7 +87,11 @@ public class LafManager {
 		try {
 			UIManager.setLookAndFeel(theme);
 			UIManager.put("Component.accentColor", new Color(0x34D9D0));
-			UIManager.put("Button.arc", 12);
+			UIManager.put("Button.arc", 14);
+			UIManager.put("TextComponent.arc", 10);
+			UIManager.put("ScrollBar.width", 12);
+			UIManager.put("TabbedPane.showTabSeparators", Boolean.FALSE);
+			UIManager.put("Table.showHorizontalLines", Boolean.FALSE);
 			UIManager.put("Component.arc", 12);
 			DockingUI.initialize();
 			return true;

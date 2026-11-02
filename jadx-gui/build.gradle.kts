@@ -66,7 +66,7 @@ tasks.test {
 }
 
 application {
-	applicationName = ("jadx-gui")
+	applicationName = ("dexriva")
 	mainClass.set("jadx.gui.JadxGUI")
 	applicationDefaultJvmArgs =
 		listOf(
@@ -162,17 +162,17 @@ launch4j {
 	mainClassName.set(application.mainClass.get())
 	copyConfigurable.set(listOf<Any>())
 	dontWrapJar.set(true)
-	icon.set("$projectDir/dist/windows/jadx-logo.ico")
-	outfile.set("jadx-gui-$jadxVersion.exe")
+	icon.set("$projectDir/dist/windows/dexriva.ico")
+	outfile.set("DEXRIVA.exe")
 	version.set(jadxVersion)
-	copyright.set("Skylot")
-	windowTitle.set("jadx")
-	companyName.set("jadx")
+	copyright.set("JADX contributors and DEXRIVA contributors")
+	windowTitle.set("DEXRIVA")
+	companyName.set("DEXRIVA Project")
 	jreMinVersion.set("11")
 	jvmOptions.set(escapeJVMOptions())
 	requires64Bit.set(true)
 	downloadUrl.set("https://www.oracle.com/java/technologies/downloads/#jdk21-windows")
-	supportUrl.set("https://github.com/skylot/jadx")
+	supportUrl.set("https://github.com/bren-wp/DEXRIVA")
 
 	bundledJrePath.set(if (project.hasProperty("bundleJRE")) "%EXEDIR%/jre" else "%JAVA_HOME%")
 	classpath.set(
