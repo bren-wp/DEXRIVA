@@ -43,7 +43,6 @@ BrandingText "DEXRIVA  •  Android Code Explorer"
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_RUN "$INSTDIR\DEXRIVA.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Launch DEXRIVA"
-!define MUI_FINISHPAGE_LINK ""
 !define MUI_FINISHPAGE_TITLE "DEXRIVA is ready"
 !define MUI_UNCONFIRMPAGE_TEXT_TOP "Remove DEXRIVA program files and shortcuts? Your personal projects will not be deleted."
 
