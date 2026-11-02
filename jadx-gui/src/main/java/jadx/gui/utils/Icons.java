@@ -31,7 +31,7 @@ public class Icons {
 	public static final ImageIcon FINAL = openSvgIcon("nodes/finalMark");
 
 	public static final ImageIcon START_PAGE = openSvgIcon("ui/dexriva-workspace");
-	public static final ImageIcon DEXRIVA_INSPECTOR = openSvgIcon("ui/dexriva-inspector");
+	public static final ImageIcon DEXRIVE_INSPECTOR = openSvgIcon("ui/dexriva-inspector");
 
 	public static final ImageIcon FOLDER = UiUtils.openSvgIcon("nodes/folder");
 	public static final ImageIcon FILE = UiUtils.openSvgIcon("nodes/file_any_type");
