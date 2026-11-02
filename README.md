@@ -6,17 +6,17 @@
 
 DEXRIVA is a community-driven desktop workspace for exploring Android bytecode and packages. It is based on the open-source [jadx](https://github.com/skylot/jadx) decompiler. We preserve jadx functionality and add DEXRIVA-specific UI and inspection tools.
 
-> **Development status:** Pre-release. Upstream source import is automated by `.github/workflows/bootstrap.yml`; until that workflow succeeds this repository contains the bootstrap sources, not a working decompiler build.
+> **Development status:** Pre-release. The upstream source import and bootstrap smoke tests succeeded. JVM/Gradle compilation and runtime validation are tracked separately in DEXRIVA CI.
 
 ## Phase 1
 
-- [ ] Import jadx source and original NOTICE / LICENSE, pinned to upstream commit `55982e0af3114a3942f6b5e289d553ff70c1ab9a`.
-- [ ] Brand the desktop title, welcome screen, window icons, and About dialog.
-- [ ] Default to a dark FlatLaf look-and-feel with an aqua accent.
-- [ ] Add **Tools → DEXRIVA APK Inspector**: local ZIP metadata checks for APK/AAB/APKS/APKM/XAPK/ZIP archives, with limits and safety warnings.
+- [x] Import jadx source and original NOTICE / LICENSE, pinned to upstream commit `55982e0af3114a3942f6b5e289d553ff70c1ab9a`.
+- [x] Brand the desktop title, welcome screen, window icons, and About dialog.
+- [x] Default to a dark FlatLaf look-and-feel with an aqua accent.
+- [x] Add **Tools → DEXRIVA APK Inspector**: local ZIP metadata checks for APK/AAB/APKS/APKM/XAPK/ZIP archives, with limits and safety warnings.
 - [ ] Validate the GUI and core with Gradle tests on CI.
 
-These checkboxes describe expected outcomes, not a claim that the bootstrap succeeded.
+The first four items were committed and passed import smoke checks; they still require full Java compilation and UI testing.
 
 ## Quick start (after source import)
 
