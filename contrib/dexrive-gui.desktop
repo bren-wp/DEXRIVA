@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=DEXRIVE
+Comment=Dex to Java decompiler
+Icon=dexrive
+Exec=dexrive-gui %f
+Terminal=false
+Type=Application
+Categories=Development;Java;
+Keywords=Java;Decompiler;
+StartupWMClass=dexrive-gui-JadxGUI

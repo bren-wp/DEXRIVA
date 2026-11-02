@@ -4,14 +4,14 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 android {
-    namespace = "com.brendigo.dexriva.inspector"
+    namespace = "com.brendigo.dexrive.inspector"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.brendigo.dexriva.inspector"
+        applicationId = "com.brendigo.dexrive.inspector"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
     }
     buildFeatures { compose = true }
     compileOptions {

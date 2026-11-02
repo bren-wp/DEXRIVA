@@ -1,4 +1,4 @@
-name: DEXRIVE Windows 1.1.0
+name: DEXRIVE Windows 1.2.0
 
 on:
   push:
@@ -11,38 +11,74 @@ permissions:
   contents: write
 
 concurrency:
-  group: dexriva-windows-${{ github.ref }}
+  group: dexrive-windows-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+          cache-dependency-path: android-inspector/**/*.gradle*
+      - name: Build and test Android APK and AAB
+        working-directory: android-inspector
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:testDebugUnitTest :app:assembleDebug :app:bundleRelease
+      - name: Stage Android build outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p android-release
+          cp android-inspector/app/build/outputs/apk/debug/app-debug.apk android-release/DEXRIVE-APK-Inspector-0.3.0-debug.apk
+          cp android-inspector/app/build/outputs/bundle/release/app-release.aab android-release/DEXRIVE-APK-Inspector-0.3.0-unsigned.aab
+          test -s android-release/DEXRIVE-APK-Inspector-0.3.0-debug.apk
+          test -s android-release/DEXRIVE-APK-Inspector-0.3.0-unsigned.aab
+          sha256sum android-release/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DEXRIVE-1.2.0-Android
+          path: android-release/*
+          if-no-files-found: error
+          retention-days: 30
+
   windows:
     runs-on: windows-latest
     timeout-minutes: 100
     env:
-      DEXRIVE_VERSION: 1.1.0
+      DEXRIVE_VERSION: 1.2.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-      - name: Generate original DEXRIVA installer artwork and icon
+      - name: Generate original DEXRIVE installer artwork and icon
         shell: pwsh
         run: |
-          python .dexriva/make_windows_ico.py
-          python .dexriva/make_setup_artwork.py
+          python .dexrive/make_windows_ico.py
+          python .dexrive/make_setup_artwork.py
+          foreach ($name in @('dexrive-welcome.bmp', 'dexrive-header.bmp')) {
+            if (!(Test-Path (Join-Path 'packaging/windows/branding' $name))) { throw "Missing NSIS artwork: $name" }
+          }
       - name: Build Windows launcher and bundled runtime
         shell: pwsh
         run: |
-          .\gradlew.bat --no-daemon :jadx-gui:copyDistWinWithJre -PbundleJRE=true
+          .\gradlew.bat --no-daemon :dexrive-gui:copyDistWinWithJre -PbundleJRE=true
       - name: Run Java unit tests
         shell: pwsh
         run: |
-          .\gradlew.bat --no-daemon :jadx-gui:test :jadx-core:test
+          .\gradlew.bat --no-daemon :dexrive-gui:test :dexrive-core:test
       - name: Validate Windows distribution
         shell: pwsh
         run: |
-          $root = "jadx-gui/build/jadx-gui-with-jre-win"
+          $root = "dexrive-gui/build/dexrive-gui-with-jre-win"
           if (!(Test-Path "$root/DEXRIVE.exe")) { throw "DEXRIVE.exe missing" }
           if (!(Test-Path "$root/jre/bin/javaw.exe")) { throw "Bundled Java runtime missing" }
           if (!(Get-ChildItem "$root/lib/*.jar")) { throw "GUI library missing" }
@@ -56,19 +92,19 @@ jobs:
       - name: Build portable.exe and setup.exe
         shell: pwsh
         run: |
-          $root = (Resolve-Path "jadx-gui/build/jadx-gui-with-jre-win").Path
-          $icon = (Resolve-Path "jadx-gui/dist/windows/dexriva.ico").Path
+          $root = (Resolve-Path "dexrive-gui/build/dexrive-gui-with-jre-win").Path
+          $icon = (Resolve-Path "dexrive-gui/dist/windows/dexrive.ico").Path
           $branding = (Resolve-Path "packaging/windows/branding").Path
           $out = Join-Path (Get-Location) "release-output"
           New-Item -ItemType Directory -Force $out | Out-Null
           $compiler = "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
           if (!(Test-Path $compiler)) { $compiler = (Get-Command makensis.exe -ErrorAction Stop).Source }
-          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexriva-portable.nsi"
+          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexrive-portable.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Portable packaging failed" }
-          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexriva-setup.nsi"
+          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexrive-setup.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Setup packaging failed" }
           Get-ChildItem $out
-          foreach ($file in @("DEXRIVE-1.1.0-portable.exe","DEXRIVE-1.1.0-setup.exe")) {
+          foreach ($file in @("DEXRIVE-1.2.0-portable.exe","DEXRIVE-1.2.0-setup.exe")) {
             $p = Join-Path $out $file
             if (!(Test-Path $p)) { throw "Missing package: $file" }
             if ((Get-Item $p).Length -lt 1000000) { throw "Incomplete package: $file" }
@@ -79,11 +115,11 @@ jobs:
         shell: pwsh
         run: |
           $out = Join-Path (Get-Location) "release-output"
-          $portable = Join-Path $out "DEXRIVE-1.1.0-portable.exe"
+          $portable = Join-Path $out "DEXRIVE-1.2.0-portable.exe"
           $portableProcess = Start-Process -FilePath $portable -ArgumentList "/S" -Wait -PassThru
           if ($portableProcess.ExitCode -ne 0) { throw "Portable extraction failed: $($portableProcess.ExitCode)" }
           if (!(Test-Path (Join-Path $out "DEXRIVE-Portable/DEXRIVE.exe"))) { throw "Portable launcher missing" }
-          $setup = Join-Path $out "DEXRIVE-1.1.0-setup.exe"
+          $setup = Join-Path $out "DEXRIVE-1.2.0-setup.exe"
           $setupProcess = Start-Process -FilePath $setup -ArgumentList "/S" -Wait -PassThru
           if ($setupProcess.ExitCode -ne 0) { throw "Silent installer failed: $($setupProcess.ExitCode)" }
           $installed = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/DEXRIVE.exe"
@@ -96,22 +132,46 @@ jobs:
       - name: Publish Windows artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DEXRIVE-1.1.0-Windows
-          path: release-output/DEXRIVE-1.1.0-*.exe
+          name: DEXRIVE-1.2.0-Windows
+          path: release-output/DEXRIVE-1.2.0-*.exe
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
-      - name: Create GitHub Release 1.1.0 after validation
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        shell: pwsh
+  publish:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: DEXRIVE-1.2.0-*
+          path: publish-assets
+          merge-multiple: true
+      - name: Validate four release assets and checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in DEXRIVE-1.2.0-setup.exe DEXRIVE-1.2.0-portable.exe DEXRIVE-APK-Inspector-0.3.0-debug.apk DEXRIVE-APK-Inspector-0.3.0-unsigned.aab; do
+            test -s "publish-assets/$name"
+          done
+          test "$(find publish-assets -maxdepth 1 -type f | wc -l)" -eq 4
+          (cd publish-assets && sha256sum * > SHA256SUMS.txt)
+      - name: Publish immutable DEXRIVE 1.2.0 release
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $files = @("release-output/DEXRIVE-1.1.0-portable.exe","release-output/DEXRIVE-1.1.0-setup.exe")
-          gh release view v1.1.0 --repo $env:GITHUB_REPOSITORY *> $null
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host "Release v1.1.0 already exists. Refusing to overwrite immutable release binaries."
+          set -euo pipefail
+          if gh release view v1.2.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::notice::v1.2.0 already exists; refusing to overwrite published assets."
             exit 0
-          }
-          gh release create v1.1.0 $files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "DEXRIVE 1.1.0" --notes-file "docs/RELEASE_1.1.0.md"
-          if ($LASTEXITCODE -ne 0) { throw "GitHub release creation failed" }
+          fi
+          gh release create v1.2.0 publish-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "DEXRIVE 1.2.0 by Brendigo" \
+            --notes-file docs/RELEASE_1.2.0.md

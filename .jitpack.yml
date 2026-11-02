@@ -1,5 +1,5 @@
 jdk:
-  - openjdk11
+  - openjdk21
 install:
-  - echo "Jitpack is not supported. Use artifacts from Maven Central (https://search.maven.org/search?q=jadx), check usage help at https://github.com/skylot/jadx/wiki/Use-jadx-as-a-library"
+  - echo "DEXRIVE is distributed as GitHub Releases and via brendigo.com; JitPack builds are unsupported."
   - ./gradlew intentional-fail

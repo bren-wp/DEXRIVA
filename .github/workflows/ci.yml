@@ -1,4 +1,4 @@
-name: DEXRIVA CI
+name: DEXRIVE CI
 
 on:
   push:
@@ -22,17 +22,17 @@ jobs:
       - name: Ensure source has been imported
         id: check
         run: |
-          if test -f jadx-core/build.gradle.kts; then
+          if test -f dexrive-core/build.gradle.kts; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Source import has not completed yet."
           fi
-      - name: Verify DEXRIVA patch and asset presence
+      - name: Verify DEXRIVE patch and asset presence
         if: steps.check.outputs.ready == 'true'
         run: |
-          test -f jadx-gui/src/main/java/jadx/gui/ui/dialog/DexrivaInspector.java
-          test -f jadx-gui/src/main/resources/logos/dexriva-logo.png
+          test -f dexrive-gui/src/main/java/jadx/gui/ui/dialog/DexriveInspector.java
+          test -f dexrive-gui/src/main/resources/logos/dexrive-logo.png
           test -f NOTICE
           test -f LICENSE
       - name: Brand and licensing smoke checks
@@ -40,4 +40,4 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Gradle GUI and core tests
         if: steps.check.outputs.ready == 'true'
-        run: ./gradlew --no-daemon :jadx-gui:test :jadx-core:test
+        run: ./gradlew --no-daemon :dexrive-gui:test :dexrive-core:test :dexrive-cli:test :dexrive-commons:dexrive-app-commons:test

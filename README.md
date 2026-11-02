@@ -10,7 +10,7 @@
 
 **By Brendigo.** An elegant, local-first workspace for exploring Android packages, resources, and bytecode. Original brand, interface artwork, packaging and product enhancements developed for DEXRIVE by Brendigo.
 
-**Current release status:** Windows v1.0.0 is an older build bearing the original DEXRIVA filename and branding. The DEXRIVE redesign is under development in [PR #2](https://github.com/bren-wp/DEXRIVA/pull/2), with new 1.1.0 packages pending CI. The illustrations below are *design visuals*, not verified screenshots of existing release binaries.
+**Release status:** DEXRIVE v1.1.0 for Windows is published. The next v1.2.0 release migrates the Gradle module layout and Android preview namespace and remains under CI review. The illustrations below are *design concepts*, not screenshots of a running release.
 
 <table>
 <tr>
@@ -42,7 +42,21 @@
 | **Setup.exe** | DEXRIVE-branded welcome screen, Apache 2.0 license acceptance, directory choice, optional shortcuts and uninstall support |
 | **Portable.exe** | No setup wizard, shortcut or registry writes. Unpacks beside the launcher on first run, then opens the app. |
 
-Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **New DEXRIVE 1.1.0 executables are not yet published.** The existing Windows binaries are unsigned (no Authenticode certificate).
+Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **DEXRIVE 1.1.0 setup and portable builds are published.** Release 1.2.0 is configured to publish Windows setup, portable and Android debug APK / unsigned AAB only after both platforms pass CI. The current Windows binaries are unsigned (no Authenticode certificate). Android debug APKs and unsigned AABs are for development and require production signing before Google Play distribution.
+
+## Command-line edition
+
+DEXRIVE also provides a local CLI for scripts and automated analysis. The user-facing command is `dexrive` (not the inherited launcher name):
+
+```sh
+dexrive --help
+dexrive -d output app.apk
+dexrive --log-level ERROR app.apk
+```
+
+Use the `DEXRIVE_` environment variable prefix, for example `DEXRIVE_CONFIG_DIR`, `DEXRIVE_CACHE_DIR`, `DEXRIVE_TMP_DIR` and `DEXRIVE_ZIP_MAX_ENTRIES_COUNT`. The DEXRIVE names take precedence when both new and inherited variable names are configured. The inherited `JADX_` aliases remain accepted for existing scripts and plug-ins. **Keep ZIP and XML security checks enabled for untrusted input.**
+
+The underlying binary APIs, class names and legacy project file formats have intentionally not been bulk-renamed. Changing them without compatibility adapters would break existing files and extensions; see [module migration notes](docs/MODULE_MIGRATION.md).
 
 ## Brand identity
 
@@ -61,10 +75,10 @@ The product brand and newly authored visuals are Brendigo's work. They do not as
 
 Requires **JDK 21** for desktop builds. Run:
 
-    ./gradlew :jadx-gui:test :jadx-core:test
-    ./gradlew :jadx-gui:run
+    ./gradlew :dexrive-gui:test :dexrive-core:test
+    ./gradlew :dexrive-gui:run
 
-The legacy Java package paths, plugin interfaces and internal module identifiers remain where renaming would break binary compatibility, configuration or saved data. User-facing product naming is DEXRIVE.
+All major Gradle modules and source repository top-level folders use `dexrive-*` names. Historical Java namespaces and selected runtime identifiers remain for binary compatibility. See [migration notes](docs/MODULE_MIGRATION.md). User-facing product naming is DEXRIVE.
 
 ## Privacy and security
 

@@ -13,8 +13,8 @@ extend-ignore-identifiers-re = [
 [files]
 extend-exclude = [
     "config/",
-    "jadx-core/src/main/resources/",
-    "jadx-core/src/test/",
-    "jadx-gui/src/main/resources/i18n/",
-    "!jadx-gui/src/main/resources/i18n/Messages_en_US.properties",
+    "dexrive-core/src/main/resources/",
+    "dexrive-core/src/test/",
+    "dexrive-gui/src/main/resources/i18n/",
+    "!dexrive-gui/src/main/resources/i18n/Messages_en_US.properties",
 ]
