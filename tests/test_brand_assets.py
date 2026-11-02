@@ -138,6 +138,30 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertIn('"DEXRIVE_" + varName.substring', helper)
         self.assertIn("return System.getenv(varName);", helper)
 
+    def test_android_responsive_ui_and_accessibility(self):
+        activity = (ROOT / "android-inspector/app/src/main/java/com/brendigo/dexrive/inspector/MainActivity.kt").read_text(encoding="utf-8")
+        for label in (
+            "DEXRIVE", "by Brendigo", "brendigo.com",
+            "Open Android package", "Copy SHA-256", "INSPECTION COMPLETE",
+            "widthIn(max = 720.dp)", "verticalScroll(rememberScrollState())",
+            "BoxWithConstraints", "SnackbarHost",
+            "semantics(mergeDescendants = true)", "Cancel",
+        ):
+            # The app must handle cancellation as well as readable, scalable cards.
+            self.assertIn(label if label != "Cancel" else "CancellationException", activity)
+
+    def test_windows_responsive_ui_and_cancelable_inspection(self):
+        start = (ROOT / "dexrive-gui/src/main/java/jadx/gui/ui/startpage/StartPagePanel.java").read_text(encoding="utf-8")
+        inspector = (ROOT / "dexrive-gui/src/main/java/jadx/gui/ui/dialog/DexriveInspector.java").read_text(encoding="utf-8")
+        self.assertIn("width < 900", start)
+        self.assertIn("width < 490", start)
+        self.assertIn("KeyEvent.VK_ENTER", start)
+        self.assertIn("openRecentProject", start)
+        self.assertIn("worker.cancel(true)", inspector)
+        self.assertIn("Thread.currentThread().isInterrupted()", inspector)
+        self.assertIn("UiUtils.setWindowIcons(dialog)", inspector)
+        self.assertIn("getMaximumWindowBounds()", inspector)
+
     def test_legal_provenance_and_brand_credit(self):
         brand_notice = (ROOT / "BRAND_NOTICE.md").read_text(encoding="utf-8")
         self.assertIn("Brendigo", brand_notice)
