@@ -137,9 +137,9 @@ public class JCommanderWrapper {
 		// print usage in not sorted fields order (by default sorted by description)
 		PrintStream out = System.out;
 		out.println();
-		out.println("jadx - dex to java decompiler, version: " + JadxDecompiler.getVersion());
+		out.println("DEXRIVE by Brendigo - Android code explorer, version: " + JadxDecompiler.getVersion());
 		out.println();
-		out.println("usage: jadx [command] [options] " + jc.getMainParameterDescription());
+		out.println("usage: dexrive [command] [options] " + jc.getMainParameterDescription());
 
 		out.println("commands (use '<command> --help' for command options):");
 		for (String command : jc.getCommands().keySet()) {
@@ -151,22 +151,22 @@ public class JCommanderWrapper {
 		out.println(appendPluginOptions(maxNamesLen));
 		out.println();
 		out.println("Environment variables:");
-		out.println("  JADX_DISABLE_XML_SECURITY - set to 'true' to disable all security checks for XML files");
-		out.println("  JADX_DISABLE_ZIP_SECURITY - set to 'true' to disable all security checks for zip files");
-		out.println("  JADX_DISABLE_ALL_SECURITY_FLAGS - set to 'true' to disable all security flags (xml, string, app package)");
-		out.println("  JADX_ZIP_MAX_ENTRIES_COUNT - maximum allowed number of entries in zip files (default: 100 000)");
-		out.println("  JADX_ZIP_BOMB_MIN_UNCOMPRESSED_SIZE - min size of zip entry to check compression ratio, in bytes (default: 25 MB)");
-		out.println("  JADX_ZIP_BOMB_DETECTION_FACTOR - maximum allowed compression ratio of zip entry (default: 100)");
-		out.println("  JADX_CONFIG_DIR - custom config directory, using system by default");
-		out.println("  JADX_CACHE_DIR - custom cache directory, using system by default");
-		out.println("  JADX_TMP_DIR - custom temp directory, using system by default");
+		out.println("  DEXRIVE_DISABLE_XML_SECURITY - set to 'true' to disable all security checks for XML files");
+		out.println("  DEXRIVE_DISABLE_ZIP_SECURITY - set to 'true' to disable all security checks for zip files");
+		out.println("  DEXRIVE_DISABLE_ALL_SECURITY_FLAGS - set to 'true' to disable all security flags (xml, string, app package)");
+		out.println("  DEXRIVE_ZIP_MAX_ENTRIES_COUNT - maximum allowed number of entries in zip files (default: 100 000)");
+		out.println("  DEXRIVE_ZIP_BOMB_MIN_UNCOMPRESSED_SIZE - min size of zip entry to check compression ratio, in bytes (default: 25 MB)");
+		out.println("  DEXRIVE_ZIP_BOMB_DETECTION_FACTOR - maximum allowed compression ratio of zip entry (default: 100)");
+		out.println("  DEXRIVE_CONFIG_DIR - custom config directory, using system by default");
+		out.println("  DEXRIVE_CACHE_DIR - custom cache directory, using system by default");
+		out.println("  DEXRIVE_TMP_DIR - custom temp directory, using system by default");
 		out.println();
 		out.println("Examples:");
-		out.println("  jadx -d out classes.dex");
-		out.println("  jadx --rename-flags \"none\" classes.dex");
-		out.println("  jadx --rename-flags \"valid, printable\" classes.dex");
-		out.println("  jadx --log-level ERROR app.apk");
-		out.println("  jadx -Pdex-input.verify-checksum=no app.apk");
+		out.println("  dexrive -d out classes.dex");
+		out.println("  dexrive --rename-flags \"none\" classes.dex");
+		out.println("  dexrive --rename-flags \"valid, printable\" classes.dex");
+		out.println("  dexrive --log-level ERROR app.apk");
+		out.println("  dexrive -Pdex-input.verify-checksum=no app.apk");
 	}
 
 	public void printUsage(JCommander subCommander) {
