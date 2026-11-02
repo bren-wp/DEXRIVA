@@ -19,6 +19,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -67,7 +68,7 @@ public class StartPagePanel extends ContentPanel {
 
         JPanel top = new JPanel(new BorderLayout(16, 12));
         top.setOpaque(false);
-        JLabel logo = new JLabel(UiUtils.openImage("/logos/dexriva-logo-48px.png"));
+        JLabel logo = new JLabel(new ImageIcon(UiUtils.openImage("/logos/dexriva-logo-48px.png")));
         logo.getAccessibleContext().setAccessibleDescription("DEXRIVA brand mark");
         top.add(logo, BorderLayout.WEST);
         JPanel headings = new JPanel();
@@ -134,6 +135,16 @@ public class StartPagePanel extends ContentPanel {
                         .getListCellRendererComponent(recentList, item, index, true, false);
                 renderer.setSize(bounds.getSize());
                 renderer.doLayout();
+                // Renderer computes the clickable close-button bounds when painted.
+                java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(
+                        Math.max(1, bounds.width), Math.max(1, bounds.height),
+                        java.awt.image.BufferedImage.TYPE_INT_ARGB);
+                java.awt.Graphics2D graphics = image.createGraphics();
+                try {
+                    renderer.paint(graphics);
+                } finally {
+                    graphics.dispose();
+                }
                 Rectangle remove = renderer.getRemoveIconBounds();
                 if (remove != null && remove.contains(e.getX() - bounds.x, e.getY() - bounds.y)) {
                     removeRecentProject(item.getPath());
