@@ -164,7 +164,7 @@ launch4j {
 	dontWrapJar.set(true)
 	icon.set("$projectDir/dist/windows/dexriva.ico")
 	outfile.set("DEXRIVE.exe")
-	version.set(jadxVersion)
+	version.set("1.1.0")
 	copyright.set("DEXRIVE enhancements © Brendigo; upstream notices retained")
 	windowTitle.set("DEXRIVE")
 	companyName.set("Brendigo")

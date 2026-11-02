@@ -56,6 +56,13 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertIn("DexrivaInspector.open(this)", content)
         self.assertIn('DEFAULT_TITLE = "DEXRIVE • Brendigo"', content)
 
+    def test_all_locales_use_new_product_name(self):
+        root = ROOT / "jadx-gui/src/main/resources/i18n"
+        for path in root.glob("Messages_*.properties"):
+            data = path.read_text(encoding="utf-8")
+            self.assertNotIn("DEXRIVA", data, str(path))
+            self.assertIn("start_page.title=DEXRIVE Workspace", data, str(path))
+
     def test_generated_png_icons(self):
         logos = ROOT / "jadx-gui/src/main/resources/logos"
         sizes = [(16, "dexriva-logo-16px.png"), (32, "dexriva-logo-32px.png"), (48, "dexriva-logo-48px.png"), (256, "dexriva-logo.png")]
