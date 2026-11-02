@@ -176,14 +176,12 @@ import jadx.gui.ui.tab.TabbedPane;
 import jadx.gui.ui.tab.TabsController;
 import jadx.gui.ui.treenodes.SummaryNode;
 import jadx.gui.ui.treenodes.UndisplayedStringsNode;
-import jadx.gui.update.JadxUpdate;
 import jadx.gui.utils.CacheObject;
 import jadx.gui.utils.DesktopEntryUtils;
 import jadx.gui.utils.FontUtils;
 import jadx.gui.utils.ILoadListener;
 import jadx.gui.utils.Icons;
 import jadx.gui.utils.LafManager;
-import jadx.gui.utils.Link;
 import jadx.gui.utils.NLS;
 import jadx.gui.utils.TextStandardActions;
 import jadx.gui.utils.UiUtils;
@@ -241,7 +239,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 	private JCheckBoxMenuItem liveReloadMenuItem;
 	private final LiveReloadWorker liveReloadWorker;
 
-	private transient Link updateLink;
 	private transient ProgressPanel progressPane;
 
 	private transient IssuesPanel issuesPanel;
@@ -1313,8 +1310,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 		flatPkgButton.addActionListener(flatPkgAction);
 		flatPkgButton.setToolTipText(NLS.str("menu.flatten"));
 
-		updateLink = new Link();
-		updateLink.setVisible(false);
 
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
@@ -1349,7 +1344,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 		toolbar.add(prefsAction);
 		toolbar.addSeparator();
 		toolbar.add(Box.createHorizontalGlue());
-		toolbar.add(updateLink);
 
 		mainPanel.add(toolbar, BorderLayout.NORTH);
 

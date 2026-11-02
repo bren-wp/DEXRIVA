@@ -93,7 +93,7 @@ public class StartPagePanel extends ContentPanel {
         openPackage.addActionListener(e -> mainWindow.openFileDialog());
         JButton openWorkspace = action("Open project", "Continue your analysis", Icons.OPEN_PROJECT, font);
         openWorkspace.addActionListener(e -> mainWindow.openProjectDialog());
-        JButton inspect = action("APK Inspector", "Local package overview", Icons.FILE, font);
+        JButton inspect = action("APK Inspector", "Local package overview", Icons.DEXRIVA_INSPECTOR, font);
         inspect.addActionListener(e -> DexrivaInspector.open(mainWindow));
         actionGrid.add(openPackage);
         actionGrid.add(openWorkspace);

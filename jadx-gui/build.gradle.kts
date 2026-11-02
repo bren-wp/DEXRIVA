@@ -206,7 +206,7 @@ runtime {
 	jpackage {
 		val os = DefaultNativePlatform.getCurrentOperatingSystem()
 		if (os.isMacOsX) {
-			imageName = "jadx-gui"
+			imageName = "DEXRIVA"
 			val fileAssociations =
 				fileTree("$projectDir/dist/macos/jpackage-file-associations") { include("*.properties") }
 					.files
@@ -215,14 +215,14 @@ runtime {
 			imageOptions =
 				listOf(
 					"--icon",
-					"$projectDir/dist/macos/jadx-logo.icns",
+					"$projectDir/dist/macos/dexriva-logo.icns",
 					"--mac-package-identifier",
 					"io.github.skylot.jadx",
 				) + fileAssociations
 			// jpackage on macOS requires version as up to three integers separated by dots
 			appVersion = if (jadxVersion.matches(Regex("\\d+(\\.\\d+){0,2}"))) jadxVersion else "1.0.0"
 			installerType = "dmg"
-			installerName = "jadx-gui"
+			installerName = "DEXRIVA"
 			skipInstaller = false
 		} else if (os.isWindows) {
 			// WiX Toolset required
