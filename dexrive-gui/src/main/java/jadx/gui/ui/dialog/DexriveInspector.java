@@ -4,6 +4,11 @@ import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.Color;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.Dimension;
@@ -13,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -29,6 +35,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jadx.gui.utils.UiUtils;
+
 /**
  * Offline archive metadata inspection. Does not extract, load, or execute APK contents.
  * Not a malware scanner or cryptographic signature verifier.
@@ -37,6 +45,10 @@ public final class DexriveInspector {
     private static final int MAX_ENTRIES = 100_000;
     private static final long LARGE_ENTRY = 512L * 1024 * 1024;
     private static final double HIGH_RATIO = 100.0;
+    private static final Color AQUA = new Color(0x34D9D0);
+    private static final Color MUTED = new Color(0xA7B7C9);
+    private static final Color NAVY = new Color(0x101927);
+    private static final Color PANEL = new Color(0x172A3F);
 
     private DexriveInspector() {
     }
@@ -49,11 +61,15 @@ public final class DexriveInspector {
                 "DEXRIVE | APK Inspector", Dialog.ModalityType.MODELESS);
         JPanel content = new JPanel(new BorderLayout(0, 16));
         content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        content.setBackground(NAVY);
 
         JLabel title = new JLabel("APK INSPECTOR");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 23f));
+        title.setForeground(AQUA);
         JLabel subtitle = new JLabel("Local package analysis • by Brendigo");
+        subtitle.setForeground(MUTED);
         JPanel header = new JPanel(new BorderLayout(0, 6));
+        header.setOpaque(false);
         header.add(title, BorderLayout.NORTH);
         header.add(subtitle, BorderLayout.SOUTH);
         content.add(header, BorderLayout.NORTH);
@@ -61,6 +77,11 @@ public final class DexriveInspector {
         JTextArea report = new JTextArea("Choose an APK, AAB, APKS, APKM, XAPK or ZIP to inspect.\n"
                 + "ZIP metadata is read locally and no files are extracted or uploaded.");
         report.setEditable(false);
+        report.setLineWrap(true);
+        report.setWrapStyleWord(true);
+        report.setBackground(PANEL);
+        report.setForeground(Color.WHITE);
+        report.setCaretColor(AQUA);
         report.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         report.setMargin(new java.awt.Insets(14, 14, 14, 14));
         JScrollPane scroll = new JScrollPane(report);
@@ -71,10 +92,22 @@ public final class DexriveInspector {
         copy.setEnabled(false);
         JButton close = new JButton("Close");
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
+        controls.setOpaque(false);
         controls.add(choose);
         controls.add(copy);
         controls.add(close);
         content.add(controls, BorderLayout.SOUTH);
+
+        AtomicReference<SwingWorker<String, Void>> activeWorker = new AtomicReference<>();
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                SwingWorker<String, Void> worker = activeWorker.getAndSet(null);
+                if (worker != null) {
+                    worker.cancel(true);
+                }
+            }
+        });
 
         choose.addActionListener(event -> {
             JFileChooser chooser = new JFileChooser();
@@ -89,7 +122,7 @@ public final class DexriveInspector {
             report.setText("Inspecting " + path.getFileName() + "...");
             choose.setEnabled(false);
             copy.setEnabled(false);
-            new SwingWorker<String, Void>() {
+            SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
                 @Override
                 protected String doInBackground() throws IOException {
                     return inspect(path);
@@ -97,8 +130,12 @@ public final class DexriveInspector {
 
                 @Override
                 protected void done() {
-                    choose.setEnabled(true);
+                    activeWorker.compareAndSet(this, null);
                     if (!dialog.isDisplayable()) {
+                        return;
+                    }
+                    choose.setEnabled(true);
+                    if (isCancelled()) {
                         return;
                     }
                     try {
@@ -112,16 +149,29 @@ public final class DexriveInspector {
                         report.setText("Cannot inspect archive: " + e.getCause().getMessage());
                     }
                 }
-            }.execute();
+            };
+            activeWorker.set(worker);
+            worker.execute();
         });
 
-        copy.addActionListener(event -> Toolkit.getDefaultToolkit().getSystemClipboard()
-                .setContents(new StringSelection(report.getText()), null));
+        copy.addActionListener(event -> {
+            try {
+                Toolkit.getDefaultToolkit().getSystemClipboard()
+                        .setContents(new StringSelection(report.getText()), null);
+            } catch (IllegalStateException | SecurityException e) {
+                JOptionPane.showMessageDialog(dialog, "Clipboard is unavailable. Please try again.",
+                        "DEXRIVE", JOptionPane.WARNING_MESSAGE);
+            }
+        });
         close.addActionListener(event -> dialog.dispose());
 
         dialog.setContentPane(content);
-        dialog.setMinimumSize(new Dimension(420, 330));
-        dialog.setSize(820, 600);
+        UiUtils.setWindowIcons(dialog);
+        Rectangle usable = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        int width = Math.max(320, usable.width - 48);
+        int height = Math.max(260, usable.height - 48);
+        dialog.setMinimumSize(new Dimension(Math.min(420, width), Math.min(330, height)));
+        dialog.setSize(Math.min(820, width), Math.min(600, height));
         dialog.setLocationRelativeTo(parent);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setVisible(true);
@@ -146,6 +196,9 @@ public final class DexriveInspector {
         try (ZipFile zip = new ZipFile(path.toFile())) {
             Enumeration<? extends ZipEntry> iterator = zip.entries();
             while (iterator.hasMoreElements()) {
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new IOException("Inspection cancelled");
+                }
                 if (entries == MAX_ENTRIES) {
                     limitReached = true;
                     break;
