@@ -9,6 +9,13 @@ This release packages the DEXRIVE-branded graphical application with the establi
 - `DEXRIVE-1.2.0-setup.exe` — per-user NSIS Modern UI setup with original DEXRIVE artwork, Apache-2.0 license acceptance, selectable shortcuts, install directory, uninstall registration, optional launch and bundled Java runtime.
 - `DEXRIVE-1.2.0-portable.exe` — no installer wizard or registry, extracts next to the file and launches the bundled executable. First launch requires a writable directory.
 
+## Android builds in this release
+
+- `DEXRIVE-APK-Inspector-0.3.0-debug.apk` — Android debug APK, development-key signed; intended for testing only.
+- `DEXRIVE-APK-Inspector-0.3.0-unsigned.aab` — Android release bundle, **not signed** for Google Play. Upload requires production app-signing credentials and appropriate version identity.
+
+Both Android builds must pass unit tests and come from the same reviewed source commit as the Windows installers; the release includes `SHA256SUMS.txt`.
+
 ## Branding
 
 Original DEXRIVE dark/aqua logo, app splash, workspace layout, menu icon updates and Brendigo website/publisher details. Marketing assets and visual identity are located in `assets/`, `docs/BRAND_GUIDELINES.md` and the repository README.

@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     report = null
                     scope.launch {
                         val result = withContext(Dispatchers.IO) { runCatching { PackageScanner.inspect(this@MainActivity, uri) } }
-                        result.onSuccess { report = it }.onFailure { error = it.message }
+                        result.onSuccess { report = it }.onFailure { error = "Unable to inspect this package. Choose a supported file and try again." }
                         loading = false
                     }
                 }
@@ -42,7 +43,10 @@ class MainActivity : ComponentActivity() {
             val aqua = Color(0xFF34D9D0)
             MaterialTheme(colorScheme = darkColorScheme(primary = aqua, background = Color(0xFF101927), surface = Color(0xFF1A2B40))) {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                    Column(modifier = Modifier.widthIn(max = 720.dp).fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 24.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Text("DEXRIVE", fontSize = 30.sp, color = aqua)
                         Text("ANDROID APK INSPECTOR", fontSize = 19.sp)
@@ -70,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         }
                         Text("Only archive metadata is inspected. No files are extracted or executed. Not a malware or APK-signature verification tool.",
                             fontSize = 13.sp)
+                    }
                     }
                 }
             }

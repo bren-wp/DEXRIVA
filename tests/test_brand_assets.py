@@ -76,6 +76,21 @@ class BrandIntegrationTest(unittest.TestCase):
             self.assertIn(name, installer)
         self.assertNotIn("dexriva-", installer)
 
+    def test_release_pipeline_has_all_platform_packages(self):
+        workflow = (ROOT / ".github/workflows/windows-release.yml").read_text(encoding="utf-8")
+        self.assertIn("needs: [windows, android]", workflow)
+        self.assertIn("DEXRIVE-1.2.0-setup.exe", workflow)
+        self.assertIn("DEXRIVE-1.2.0-portable.exe", workflow)
+        self.assertIn("DEXRIVE-APK-Inspector-0.3.0-debug.apk", workflow)
+        self.assertIn("DEXRIVE-APK-Inspector-0.3.0-unsigned.aab", workflow)
+        self.assertIn("testDebugUnitTest :app:assembleDebug :app:bundleRelease", workflow)
+        self.assertIn("SHA256SUMS.txt", workflow)
+
+    def test_android_layout_is_width_constrained(self):
+        activity = (ROOT / "android-inspector/app/src/main/java/com/brendigo/dexrive/inspector/MainActivity.kt").read_text(encoding="utf-8")
+        self.assertIn("widthIn(max = 720.dp)", activity)
+        self.assertIn("verticalScroll(rememberScrollState())", activity)
+
     def test_renamed_gradle_modules(self):
         settings = (ROOT / "settings.gradle.kts").read_text(encoding="utf-8")
         self.assertIn('rootProject.name = "dexrive"', settings)

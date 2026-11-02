@@ -42,7 +42,7 @@
 | **Setup.exe** | DEXRIVE-branded welcome screen, Apache 2.0 license acceptance, directory choice, optional shortcuts and uninstall support |
 | **Portable.exe** | No setup wizard, shortcut or registry writes. Unpacks beside the launcher on first run, then opens the app. |
 
-Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **DEXRIVE 1.1.0 setup and portable builds are published.** The current Windows binaries are unsigned (no Authenticode certificate).
+Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **DEXRIVE 1.1.0 setup and portable builds are published.** Release 1.2.0 is configured to publish Windows setup, portable and Android debug APK / unsigned AAB only after both platforms pass CI. The current Windows binaries are unsigned (no Authenticode certificate). Android debug APKs and unsigned AABs are for development and require production signing before Google Play distribution.
 
 ## Brand identity
 
