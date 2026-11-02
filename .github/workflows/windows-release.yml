@@ -31,6 +31,9 @@ jobs:
         run: |
           python .dexrive/make_windows_ico.py
           python .dexrive/make_setup_artwork.py
+          foreach ($name in @('dexrive-welcome.bmp', 'dexrive-header.bmp')) {
+            if (!(Test-Path (Join-Path 'packaging/windows/branding' $name))) { throw "Missing NSIS artwork: $name" }
+          }
       - name: Build Windows launcher and bundled runtime
         shell: pwsh
         run: |

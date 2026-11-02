@@ -65,6 +65,16 @@ class BrandIntegrationTest(unittest.TestCase):
             self.assertIn("start_page.title=DEXRIVE Workspace", data, str(path))
 
 
+    def test_installer_artwork_matches_generated_names(self):
+        import re
+        script = (ROOT / ".dexrive/make_setup_artwork.py").read_text(encoding="utf-8")
+        installer = (ROOT / "packaging/windows/dexrive-setup.nsi").read_text(encoding="utf-8")
+        declared = re.findall(r'BRANDROOT}\\\\([^"]+\\.bmp)', installer)
+        self.assertGreaterEqual(len(declared), 2)
+        for name in declared:
+            self.assertIn('"' + name + '"', script)
+        self.assertNotIn("dexriva-", installer)
+
     def test_renamed_gradle_modules(self):
         settings = (ROOT / "settings.gradle.kts").read_text(encoding="utf-8")
         self.assertIn('rootProject.name = "dexrive"', settings)

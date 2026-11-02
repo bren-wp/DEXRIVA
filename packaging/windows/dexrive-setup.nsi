@@ -29,9 +29,9 @@ BrandingText "DEXRIVE  •  by Brendigo  •  brendigo.com"
 
 ; Original DEXRIVE install artwork, generated locally during packaging.
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "${BRANDROOT}\dexriva-header.bmp"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${BRANDROOT}\dexriva-welcome.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "${BRANDROOT}\dexriva-welcome.bmp"
+!define MUI_HEADERIMAGE_BITMAP "${BRANDROOT}\dexrive-header.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${BRANDROOT}\dexrive-welcome.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "${BRANDROOT}\dexrive-welcome.bmp"
 !define MUI_ABORTWARNING
 !define MUI_ICON "${ICONROOT}"
 !define MUI_UNICON "${ICONROOT}"
