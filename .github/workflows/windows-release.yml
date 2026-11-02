@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: dexriva-windows-1.0.0
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   windows:
