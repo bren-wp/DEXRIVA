@@ -11,21 +11,21 @@ plugins {
 
 val jadxEnv = loadEnv(file("$rootDir/.env"))
 
-val jadxVersion = jadxEnv["JADX_VERSION"] ?: "dev"
+val jadxVersion = jadxEnv["DEXRIVE_VERSION"] ?: jadxEnv["JADX_VERSION"] ?: "dev"
 extra.set("jadxVersion", jadxVersion)
-println("jadx version: $jadxVersion")
+println("DEXRIVE version: $jadxVersion")
 version = jadxVersion
 
 val jadxBuildJavaVersion = getBuildJavaVersion()
 extra.set("jadxBuildJavaVersion", jadxBuildJavaVersion)
 
 fun getBuildJavaVersion(): Int? {
-	val envVarName = "JADX_BUILD_JAVA_VERSION"
-	val buildJavaVer = jadxEnv[envVarName]?.toInt() ?: return null
+	val envVarName = "DEXRIVE_BUILD_JAVA_VERSION"
+	val buildJavaVer = (jadxEnv[envVarName] ?: jadxEnv["JADX_BUILD_JAVA_VERSION"])?.toInt() ?: return null
 	if (buildJavaVer < 11) {
 		throw GradleException("'$envVarName' can't be set to lower than 11")
 	}
-	println("Set Java toolchain for jadx build to version '$buildJavaVer'")
+	println("Set Java toolchain for DEXRIVE build to version '$buildJavaVer'")
 	return buildJavaVer
 }
 
@@ -76,7 +76,7 @@ fun loadEnv(file: File): Map<String, String> {
 	val envMap = HashMap<String, String>()
 	System
 		.getenv()
-		.filter { it.key.startsWith("JADX_") }
+		.filter { it.key.startsWith("JADX_") || it.key.startsWith("DEXRIVE_") }
 		.forEach { envMap[it.key] = it.value }
 	if (file.exists()) {
 		file

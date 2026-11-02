@@ -10,7 +10,7 @@
 
 **By Brendigo.** An elegant, local-first workspace for exploring Android packages, resources, and bytecode. Original brand, interface artwork, packaging and product enhancements developed for DEXRIVE by Brendigo.
 
-**Release status:** The Windows v1.1.0 product build is being verified; availability depends on the GitHub Release artifacts. This migration branch is updating Gradle modules and source layout. The illustrations below are *design concepts*, not screenshots of a running release.
+**Release status:** DEXRIVE v1.1.0 for Windows is published. The next v1.2.0 release migrates the Gradle module layout and Android preview namespace and remains under CI review. The illustrations below are *design concepts*, not screenshots of a running release.
 
 <table>
 <tr>
@@ -42,7 +42,7 @@
 | **Setup.exe** | DEXRIVE-branded welcome screen, Apache 2.0 license acceptance, directory choice, optional shortcuts and uninstall support |
 | **Portable.exe** | No setup wizard, shortcut or registry writes. Unpacks beside the launcher on first run, then opens the app. |
 
-Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **New DEXRIVE 1.1.0 executables are not yet published.** The existing Windows binaries are unsigned (no Authenticode certificate).
+Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **DEXRIVE 1.1.0 setup and portable builds are published.** The current Windows binaries are unsigned (no Authenticode certificate).
 
 ## Brand identity
 

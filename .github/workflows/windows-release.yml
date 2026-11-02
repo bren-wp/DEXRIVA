@@ -1,4 +1,4 @@
-name: DEXRIVE Windows 1.1.0
+name: DEXRIVE Windows 1.2.0
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 100
     env:
-      DEXRIVE_VERSION: 1.1.0
+      DEXRIVE_VERSION: 1.2.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -68,7 +68,7 @@ jobs:
           & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexrive-setup.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Setup packaging failed" }
           Get-ChildItem $out
-          foreach ($file in @("DEXRIVE-1.1.0-portable.exe","DEXRIVE-1.1.0-setup.exe")) {
+          foreach ($file in @("DEXRIVE-1.2.0-portable.exe","DEXRIVE-1.2.0-setup.exe")) {
             $p = Join-Path $out $file
             if (!(Test-Path $p)) { throw "Missing package: $file" }
             if ((Get-Item $p).Length -lt 1000000) { throw "Incomplete package: $file" }
@@ -79,11 +79,11 @@ jobs:
         shell: pwsh
         run: |
           $out = Join-Path (Get-Location) "release-output"
-          $portable = Join-Path $out "DEXRIVE-1.1.0-portable.exe"
+          $portable = Join-Path $out "DEXRIVE-1.2.0-portable.exe"
           $portableProcess = Start-Process -FilePath $portable -ArgumentList "/S" -Wait -PassThru
           if ($portableProcess.ExitCode -ne 0) { throw "Portable extraction failed: $($portableProcess.ExitCode)" }
           if (!(Test-Path (Join-Path $out "DEXRIVE-Portable/DEXRIVE.exe"))) { throw "Portable launcher missing" }
-          $setup = Join-Path $out "DEXRIVE-1.1.0-setup.exe"
+          $setup = Join-Path $out "DEXRIVE-1.2.0-setup.exe"
           $setupProcess = Start-Process -FilePath $setup -ArgumentList "/S" -Wait -PassThru
           if ($setupProcess.ExitCode -ne 0) { throw "Silent installer failed: $($setupProcess.ExitCode)" }
           $installed = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/DEXRIVE.exe"
@@ -96,22 +96,22 @@ jobs:
       - name: Publish Windows artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DEXRIVE-1.1.0-Windows
-          path: release-output/DEXRIVE-1.1.0-*.exe
+          name: DEXRIVE-1.2.0-Windows
+          path: release-output/DEXRIVE-1.2.0-*.exe
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
-      - name: Create GitHub Release 1.1.0 after validation
+      - name: Create GitHub Release 1.2.0 after validation
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $files = @("release-output/DEXRIVE-1.1.0-portable.exe","release-output/DEXRIVE-1.1.0-setup.exe")
-          gh release view v1.1.0 --repo $env:GITHUB_REPOSITORY *> $null
+          $files = @("release-output/DEXRIVE-1.2.0-portable.exe","release-output/DEXRIVE-1.2.0-setup.exe")
+          gh release view v1.2.0 --repo $env:GITHUB_REPOSITORY *> $null
           if ($LASTEXITCODE -eq 0) {
-            Write-Host "Release v1.1.0 already exists. Refusing to overwrite immutable release binaries."
+            Write-Host "Release v1.2.0 already exists. Refusing to overwrite immutable release binaries."
             exit 0
           }
-          gh release create v1.1.0 $files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "DEXRIVE 1.1.0" --notes-file "docs/RELEASE_1.1.0.md"
+          gh release create v1.2.0 $files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "DEXRIVE 1.2.0" --notes-file "docs/RELEASE_1.2.0.md"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release creation failed" }

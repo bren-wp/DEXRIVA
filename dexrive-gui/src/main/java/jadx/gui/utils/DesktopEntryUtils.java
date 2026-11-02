@@ -18,11 +18,11 @@ import jadx.core.utils.files.FileUtils;
 public class DesktopEntryUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(DesktopEntryUtils.class);
 	private static final Map<Integer, String> SIZE_TO_LOGO_MAP = Map.of(
-			16, "jadx-logo-16px.png",
-			32, "jadx-logo-32px.png",
-			48, "jadx-logo-48px.png",
-			252, "jadx-logo.png",
-			256, "jadx-logo.png");
+			16, "dexrive-logo-16px.png",
+			32, "dexrive-logo-32px.png",
+			48, "dexrive-logo-48px.png",
+			252, "dexrive-logo.png",
+			256, "dexrive-logo.png");
 	private static final Path XDG_DESKTOP_MENU_COMMAND_PATH = findExecutablePath("xdg-desktop-menu");
 	private static final Path XDG_ICON_RESOURCE_COMMAND_PATH = findExecutablePath("xdg-icon-resource");
 
@@ -35,7 +35,7 @@ public class DesktopEntryUtils {
 			LOG.error("xdg-icon-resource was not found in $PATH");
 			return false;
 		}
-		Path desktopTempFile = FileUtils.createTempFileNonPrefixed("jadx-gui.desktop");
+		Path desktopTempFile = FileUtils.createTempFileNonPrefixed("dexrive-gui.desktop");
 		Path iconTempFolder = FileUtils.createTempDir("logos");
 		LOG.debug("Creating desktop with temp files: {}, {}", desktopTempFile, iconTempFolder);
 		try {
@@ -93,7 +93,7 @@ public class DesktopEntryUtils {
 			ProcessBuilder iconInstallCommand =
 					new ProcessBuilder(Objects.requireNonNull(XDG_ICON_RESOURCE_COMMAND_PATH).toString(), "install", "--novendor", "--size",
 							String.valueOf(size), iconPath.toString(),
-							"jadx");
+							"dexrive");
 			Process process = iconInstallCommand.start();
 			int statusCode = process.waitFor();
 			if (statusCode != 0) {
@@ -120,7 +120,7 @@ public class DesktopEntryUtils {
 
 	private static boolean writeDesktopFile(String launchScriptPath, Path desktopFilePath) {
 		try {
-			TemplateFile tmpl = TemplateFile.fromResources("/files/jadx-gui.desktop.tmpl");
+			TemplateFile tmpl = TemplateFile.fromResources("/files/dexrive-gui.desktop.tmpl");
 			tmpl.add("launchScriptPath", launchScriptPath);
 			FileUtils.writeFile(desktopFilePath, tmpl.build());
 		} catch (Exception e) {

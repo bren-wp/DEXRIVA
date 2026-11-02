@@ -22,8 +22,8 @@ dependencies {
 val jadxTestJavaVersion = getTestJavaVersion()
 
 fun getTestJavaVersion(): Int? {
-	val envVarName = "JADX_TEST_JAVA_VERSION"
-	val testJavaVer = System.getenv(envVarName)?.toInt() ?: return null
+	val envVarName = "DEXRIVE_TEST_JAVA_VERSION"
+	val testJavaVer = (System.getenv(envVarName) ?: System.getenv("JADX_TEST_JAVA_VERSION"))?.toInt() ?: return null
 	val currentJavaVer =
 		java.toolchain.languageVersion
 			.get()
