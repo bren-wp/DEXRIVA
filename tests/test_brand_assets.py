@@ -61,6 +61,7 @@ class BrandIntegrationTest(unittest.TestCase):
         for path in root.glob("Messages_*.properties"):
             data = path.read_text(encoding="utf-8")
             self.assertNotIn("DEXRIVA", data, str(path))
+            self.assertNotIn("Jadx is running low", data, str(path))
             self.assertIn("start_page.title=DEXRIVE Workspace", data, str(path))
 
     def test_generated_png_icons(self):
