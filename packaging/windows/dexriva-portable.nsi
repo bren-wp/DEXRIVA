@@ -25,7 +25,10 @@ AutoCloseWindow true
 !insertmacro GetOptions
 
 Section "Portable launch"
-  IfFileExists "$EXEDIR\DEXRIVE-Portable\DEXRIVE.exe" ready
+  IfFileExists "$EXEDIR\DEXRIVE-Portable\DEXRIVE.exe" 0 extract
+  IfFileExists "$EXEDIR\DEXRIVE-Portable\jre\bin\javaw.exe" 0 extract
+  IfFileExists "$EXEDIR\DEXRIVE-Portable\lib\*.jar" ready extract
+extract:
   SetOutPath "$EXEDIR\DEXRIVE-Portable"
   ClearErrors
   File /r "${APPROOT}\*"

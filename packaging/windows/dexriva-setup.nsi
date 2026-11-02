@@ -103,6 +103,15 @@ Section "Uninstall"
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\DEXRIVE"
   DeleteRegKey HKCU "Software\DEXRIVE"
 
-  ; Do not delete user workspace files, settings, or any external project folders.
-  RMDir /r "$INSTDIR"
+  ; Never recursively delete the user-selected installation directory:
+  ; it may contain unrelated documents.
+  Delete "$INSTDIR\DEXRIVE.exe"
+  Delete "$INSTDIR\LICENSE"
+  Delete "$INSTDIR\NOTICE"
+  Delete "$INSTDIR\BRAND_NOTICE.md"
+  Delete "$INSTDIR\README.md"
+  RMDir /r "$INSTDIR\lib"
+  RMDir /r "$INSTDIR\jre"
+  Delete "$INSTDIR\Uninstall.exe"
+  RMDir "$INSTDIR"
 SectionEnd
