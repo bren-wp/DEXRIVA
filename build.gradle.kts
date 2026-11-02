@@ -109,48 +109,48 @@ val distMacConfiguration =
 		isCanBeConsumed = false
 	}
 dependencies {
-	distWinConfiguration(project(":jadx-gui", "distWinConfiguration"))
-	distWinWithJreConfiguration(project(":jadx-gui", "distWinWithJreConfiguration"))
-	distMacConfiguration(project(":jadx-gui", "distMacConfiguration"))
+	distWinConfiguration(project(":dexrive-gui", "distWinConfiguration"))
+	distWinWithJreConfiguration(project(":dexrive-gui", "distWinWithJreConfiguration"))
+	distMacConfiguration(project(":dexrive-gui", "distMacConfiguration"))
 }
 
 val copyArtifacts =
 	tasks.register<Copy>("copyArtifacts") {
-		val jarCliPattern = "jadx-cli-(.*)-all.jar".toPattern()
-		from(tasks.getByPath(":jadx-cli:installShadowDist")) {
+		val jarCliPattern = "dexrive-cli-(.*)-all.jar".toPattern()
+		from(tasks.getByPath(":dexrive-cli:installShadowDist")) {
 			exclude("**/*.jar")
 			filter { line ->
 				jarCliPattern
 					.matcher(line)
-					.replaceAll("jadx-$1-all.jar")
+					.replaceAll("dexrive-$1-all.jar")
 					.replace("-jar \"\\\"\$CLASSPATH\\\"\"", "-cp \"\\\"\$CLASSPATH\\\"\" jadx.cli.JadxCLI")
 					.replace("-jar \"%CLASSPATH%\"", "-cp \"%CLASSPATH%\" jadx.cli.JadxCLI")
 			}
 		}
-		val jarGuiPattern = "jadx-gui-(.*)-all.jar".toPattern()
-		from(tasks.getByPath(":jadx-gui:installShadowDist")) {
+		val jarGuiPattern = "dexrive-gui-(.*)-all.jar".toPattern()
+		from(tasks.getByPath(":dexrive-gui:installShadowDist")) {
 			exclude("**/*.jar")
-			filter { line -> jarGuiPattern.matcher(line).replaceAll("jadx-$1-all.jar") }
+			filter { line -> jarGuiPattern.matcher(line).replaceAll("dexrive-$1-all.jar") }
 		}
-		from(tasks.getByPath(":jadx-gui:installShadowDist")) {
+		from(tasks.getByPath(":dexrive-gui:installShadowDist")) {
 			include("**/*.jar")
-			rename("jadx-gui-(.*)-all.jar", "jadx-$1-all.jar")
+			rename("dexrive-gui-(.*)-all.jar", "dexrive-$1-all.jar")
 		}
 		from(layout.projectDirectory) {
 			include("README.md")
 			include("LICENSE")
 		}
-		into(layout.buildDirectory.dir("jadx"))
+		into(layout.buildDirectory.dir("dexrive"))
 		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	}
 
 val pack =
 	tasks.register<Zip>("pack") {
 		from(copyArtifacts)
-		archiveFileName.set("jadx-$jadxVersion.zip")
+		archiveFileName.set("dexrive-$jadxVersion.zip")
 		destinationDirectory.set(layout.buildDirectory)
 		eachFile {
-			if (path == "bin/jadx" || path == "bin/jadx-gui") {
+			if (path == "bin/jadx" || path == "bin/dexrive-gui") {
 				permissions {
 					unix("rwxr-xr-x")
 				}
@@ -160,13 +160,13 @@ val pack =
 
 val distWin =
 	tasks.register<Zip>("distWin") {
-		group = "jadx"
+		group = "dexrive"
 		description = "Build Windows bundle"
 
 		from(distWinConfiguration)
 
 		destinationDirectory.set(layout.buildDirectory.dir("distWin"))
-		archiveFileName.set("jadx-gui-$jadxVersion-win.zip")
+		archiveFileName.set("dexrive-gui-$jadxVersion-win.zip")
 		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	}
 
@@ -177,7 +177,7 @@ val distWinWithJre =
 		from(distWinWithJreConfiguration)
 
 		destinationDirectory.set(layout.buildDirectory.dir("distWinWithJre"))
-		archiveFileName.set("jadx-gui-$jadxVersion-with-jre-win.zip")
+		archiveFileName.set("dexrive-gui-$jadxVersion-with-jre-win.zip")
 		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	}
 

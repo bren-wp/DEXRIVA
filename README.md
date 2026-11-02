@@ -10,7 +10,7 @@
 
 **By Brendigo.** An elegant, local-first workspace for exploring Android packages, resources, and bytecode. Original brand, interface artwork, packaging and product enhancements developed for DEXRIVE by Brendigo.
 
-**Current release status:** Windows v1.0.0 is an older build bearing the original DEXRIVA filename and branding. The DEXRIVE redesign is under development in [PR #2](https://github.com/bren-wp/DEXRIVA/pull/2), with new 1.1.0 packages pending CI. The illustrations below are *design visuals*, not verified screenshots of existing release binaries.
+**Release status:** The Windows v1.1.0 product build is being verified; availability depends on the GitHub Release artifacts. This migration branch is updating Gradle modules and source layout. The illustrations below are *design concepts*, not screenshots of a running release.
 
 <table>
 <tr>
@@ -61,10 +61,10 @@ The product brand and newly authored visuals are Brendigo's work. They do not as
 
 Requires **JDK 21** for desktop builds. Run:
 
-    ./gradlew :jadx-gui:test :jadx-core:test
-    ./gradlew :jadx-gui:run
+    ./gradlew :dexrive-gui:test :dexrive-core:test
+    ./gradlew :dexrive-gui:run
 
-The legacy Java package paths, plugin interfaces and internal module identifiers remain where renaming would break binary compatibility, configuration or saved data. User-facing product naming is DEXRIVE.
+All major Gradle modules and source repository top-level folders use `dexrive-*` names. Historical Java namespaces and selected runtime identifiers remain for binary compatibility. See [migration notes](docs/MODULE_MIGRATION.md). User-facing product naming is DEXRIVE.
 
 ## Privacy and security
 

@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: dexriva-windows-${{ github.ref }}
+  group: dexrive-windows-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,23 +26,23 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Generate original DEXRIVA installer artwork and icon
+      - name: Generate original DEXRIVE installer artwork and icon
         shell: pwsh
         run: |
-          python .dexriva/make_windows_ico.py
-          python .dexriva/make_setup_artwork.py
+          python .dexrive/make_windows_ico.py
+          python .dexrive/make_setup_artwork.py
       - name: Build Windows launcher and bundled runtime
         shell: pwsh
         run: |
-          .\gradlew.bat --no-daemon :jadx-gui:copyDistWinWithJre -PbundleJRE=true
+          .\gradlew.bat --no-daemon :dexrive-gui:copyDistWinWithJre -PbundleJRE=true
       - name: Run Java unit tests
         shell: pwsh
         run: |
-          .\gradlew.bat --no-daemon :jadx-gui:test :jadx-core:test
+          .\gradlew.bat --no-daemon :dexrive-gui:test :dexrive-core:test
       - name: Validate Windows distribution
         shell: pwsh
         run: |
-          $root = "jadx-gui/build/jadx-gui-with-jre-win"
+          $root = "dexrive-gui/build/dexrive-gui-with-jre-win"
           if (!(Test-Path "$root/DEXRIVE.exe")) { throw "DEXRIVE.exe missing" }
           if (!(Test-Path "$root/jre/bin/javaw.exe")) { throw "Bundled Java runtime missing" }
           if (!(Get-ChildItem "$root/lib/*.jar")) { throw "GUI library missing" }
@@ -56,16 +56,16 @@ jobs:
       - name: Build portable.exe and setup.exe
         shell: pwsh
         run: |
-          $root = (Resolve-Path "jadx-gui/build/jadx-gui-with-jre-win").Path
-          $icon = (Resolve-Path "jadx-gui/dist/windows/dexriva.ico").Path
+          $root = (Resolve-Path "dexrive-gui/build/dexrive-gui-with-jre-win").Path
+          $icon = (Resolve-Path "dexrive-gui/dist/windows/dexrive.ico").Path
           $branding = (Resolve-Path "packaging/windows/branding").Path
           $out = Join-Path (Get-Location) "release-output"
           New-Item -ItemType Directory -Force $out | Out-Null
           $compiler = "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
           if (!(Test-Path $compiler)) { $compiler = (Get-Command makensis.exe -ErrorAction Stop).Source }
-          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexriva-portable.nsi"
+          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexrive-portable.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Portable packaging failed" }
-          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexriva-setup.nsi"
+          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexrive-setup.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Setup packaging failed" }
           Get-ChildItem $out
           foreach ($file in @("DEXRIVE-1.1.0-portable.exe","DEXRIVE-1.1.0-setup.exe")) {

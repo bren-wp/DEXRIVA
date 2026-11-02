@@ -1,8 +1,7 @@
-# Security Policy
+# DEXRIVE Security Policy
 
-## Reporting a Vulnerability
+**Maintainer:** Brendigo · https://brendigo.com
 
-To report a security issue, please open a [new security advisory](https://github.com/skylot/jadx/security/advisories/new).
-Please fill the steps you took to create the issue, affected versions, and, if known, mitigations for the issue.
-We will check and respond within 3 working days.
-If the issue is confirmed as a vulnerability, we will apply required mitigations at the next release.
+Report a vulnerability privately using the repository's security advisory feature: https://github.com/bren-wp/DEXRIVA/security/advisories/new
+
+Provide the affected version, reproduction steps and potential impact. Do not publish working exploits before the issue has been assessed. Security fixes and timelines depend on severity and verification; no fixed response SLA is promised.
