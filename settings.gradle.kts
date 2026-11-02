@@ -20,10 +20,10 @@ plugins {
 }
 
 if (!JavaVersion.current().isJava11Compatible) {
-	throw GradleException("Jadx requires at least Java 11 for build (current version is '${JavaVersion.current()}')")
+	throw GradleException("DEXRIVE requires at least Java 11 for build (current version is '${JavaVersion.current()}')")
 }
 
-rootProject.name = "jadx"
+rootProject.name = "dexrive"
 
 include("dexrive-core")
 include("dexrive-cli")

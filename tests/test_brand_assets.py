@@ -28,9 +28,9 @@ class BrandIntegrationTest(unittest.TestCase):
 
     def test_upstream_logo_assets_not_shipped(self):
         logos = ROOT / "dexrive-gui/src/main/resources/logos"
-        self.assertFalse(list(logos.glob("dexrive-logo*")))
-        self.assertFalse((ROOT / "dexrive-gui/dist/windows/dexrive-logo.ico").exists())
-        self.assertFalse((ROOT / "dexrive-gui/dist/macos/dexrive-logo.icns").exists())
+        self.assertFalse(list(logos.glob("jadx-logo*")))
+        self.assertFalse((ROOT / "dexrive-gui/dist/windows/jadx-logo.ico").exists())
+        self.assertFalse((ROOT / "dexrive-gui/dist/macos/jadx-logo.icns").exists())
         self.assertTrue((ROOT / "dexrive-gui/dist/macos/dexrive-logo.icns").exists())
 
     def test_no_auto_upstream_update_or_issue_links(self):
