@@ -40,10 +40,21 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertNotIn("github.com/", error)
         self.assertNotIn("new JadxUpdate()", main)
 
+
+    def test_product_assets_and_attribution(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("By Brendigo", readme)
+        self.assertIn("brendigo.com", readme)
+        for path in ["assets/dexrive-mark.svg", "assets/dexrive-banner.svg",
+                     "assets/dexrive-workspace-concept.svg",
+                     "assets/feature-inspect.svg", "assets/feature-code.svg",
+                     "assets/feature-privacy.svg", "BRAND_NOTICE.md"]:
+            self.assertTrue((ROOT / path).is_file(), path)
+
     def test_native_inspector_in_tools_menu(self):
         content = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/MainWindow.java").read_text()
         self.assertIn("DexrivaInspector.open(this)", content)
-        self.assertIn('DEFAULT_TITLE = "DEXRIVE"', content)
+        self.assertIn('DEFAULT_TITLE = "DEXRIVE • Brendigo"', content)
 
     def test_generated_png_icons(self):
         logos = ROOT / "jadx-gui/src/main/resources/logos"
