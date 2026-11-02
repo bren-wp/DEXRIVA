@@ -40,4 +40,4 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Gradle GUI and core tests
         if: steps.check.outputs.ready == 'true'
-        run: ./gradlew --no-daemon :dexrive-gui:test :dexrive-core:test
+        run: ./gradlew --no-daemon :dexrive-gui:test :dexrive-core:test :dexrive-cli:test :dexrive-commons:dexrive-app-commons:test
