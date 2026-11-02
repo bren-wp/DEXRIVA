@@ -52,3 +52,16 @@ Use the Windows display scale and FlatLaf font scaling; do not use hardcoded scr
 - Validate major areas screen-by-screen against **user-approved reference screenshots**, which have not been provided for the new DEXRIVA UI yet.
 
 This is a specification and implementation progress record, not a claim of full pixel-perfect completion.
+
+## Windows packaging — original DEXRIVA wizard
+
+Installer `setup.exe` uses a branded NSIS Modern UI 2 flow in this order:
+welcome → Apache 2.0 license acceptance → selectable components (required application, optional shortcuts) → destination folder → installation progress → finish with optional launch. Current-user scope and uninstall registration; preserves user data.
+
+Portable `portable.exe` is a silent self-extracting launcher without any wizard, shortcut creation, registry writes or admin request. On first launch it extracts alongside itself, subsequent launches reuse that folder. The CI smoke test passes `/S` to perform extraction without opening the GUI.
+
+Original graphical assets for the NSIS header and welcome pane are generated from `.dexriva/make_setup_artwork.py` using Python's standard library and are **not** reproduced in chat.
+
+Neither package replaces the Apache 2.0 license or legally required attribution. UI strings are branded DEXRIVA.
+
+**Verification**: packaging CI on Windows must compile both binaries, inspect their PE signatures, validate bundle metadata and test silent install and extraction. Manual user testing of wizard layouts, screen readers and DPI scaling remains necessary.

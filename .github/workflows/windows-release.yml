@@ -3,6 +3,8 @@ name: DEXRIVA Windows 1.0.0
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -24,8 +26,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Create branded icon
-        run: python .dexriva/make_windows_ico.py
+      - name: Generate original DEXRIVA installer artwork and icon
+        shell: pwsh
+        run: |
+          python .dexriva/make_windows_ico.py
+          python .dexriva/make_setup_artwork.py
       - name: Build Windows launcher and bundled runtime
         shell: pwsh
         run: |
@@ -53,13 +58,14 @@ jobs:
         run: |
           $root = (Resolve-Path "jadx-gui/build/jadx-gui-with-jre-win").Path
           $icon = (Resolve-Path "jadx-gui/dist/windows/dexriva.ico").Path
+          $branding = (Resolve-Path "packaging/windows/branding").Path
           $out = Join-Path (Get-Location) "release-output"
           New-Item -ItemType Directory -Force $out | Out-Null
           $compiler = "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
           if (!(Test-Path $compiler)) { $compiler = (Get-Command makensis.exe -ErrorAction Stop).Source }
           & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexriva-portable.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Portable packaging failed" }
-          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexriva-setup.nsi"
+          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexriva-setup.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Setup packaging failed" }
           Get-ChildItem $out
           foreach ($file in @("DEXRIVA-1.0.0-portable.exe","DEXRIVA-1.0.0-setup.exe")) {
@@ -82,6 +88,8 @@ jobs:
           if ($setupProcess.ExitCode -ne 0) { throw "Silent installer failed: $($setupProcess.ExitCode)" }
           $installed = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/DEXRIVA.exe"
           if (!(Test-Path $installed)) { throw "Installed EXE missing" }
+          if (!(Test-Path (Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/LICENSE"))) { throw "License missing from setup" }
+          if (!(Test-Path (Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/NOTICE"))) { throw "Required NOTICE missing from setup" }
           $uninstall = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/Uninstall.exe"
           if (Test-Path $uninstall) { Start-Process -FilePath $uninstall -ArgumentList "/S" -Wait | Out-Null }
       - name: Publish Windows artifacts
@@ -93,7 +101,7 @@ jobs:
           retention-days: 30
           compression-level: 0
       - name: Create GitHub Release 1.0.0 after validation
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
