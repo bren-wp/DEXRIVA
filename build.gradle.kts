@@ -139,6 +139,8 @@ val copyArtifacts =
 		from(layout.projectDirectory) {
 			include("README.md")
 			include("LICENSE")
+			include("NOTICE")
+			include("BRAND_NOTICE.md")
 		}
 		into(layout.buildDirectory.dir("dexrive"))
 		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -150,7 +152,7 @@ val pack =
 		archiveFileName.set("dexrive-$jadxVersion.zip")
 		destinationDirectory.set(layout.buildDirectory)
 		eachFile {
-			if (path == "bin/jadx" || path == "bin/dexrive-gui") {
+			if (path == "bin/dexrive" || path == "bin/dexrive-gui") {
 				permissions {
 					unix("rwxr-xr-x")
 				}
@@ -183,7 +185,7 @@ val distWinWithJre =
 
 val distMac =
 	tasks.register<Copy>("distMac") {
-		group = "jadx"
+		group = "dexrive"
 		description = "Build macOS DMG bundle (with bundled JRE)"
 
 		from(distMacConfiguration)
@@ -193,8 +195,8 @@ val distMac =
 
 val dist =
 	tasks.register("dist") {
-		group = "jadx"
-		description = "Build jadx distribution zip bundles"
+		group = "dexrive"
+		description = "Build DEXRIVE distribution zip bundles"
 
 		dependsOn(pack)
 
