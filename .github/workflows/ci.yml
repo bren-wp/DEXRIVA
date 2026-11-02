@@ -1,0 +1,40 @@
+name: DEXRIVA CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Ensure source has been imported
+        id: check
+        run: |
+          if test -f jadx-core/build.gradle.kts; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Source import has not completed yet."
+          fi
+      - name: Verify DEXRIVA patch and asset presence
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          test -f jadx-gui/src/main/java/jadx/gui/ui/dialog/DexrivaInspector.java
+          test -f jadx-gui/src/main/resources/logos/dexriva-logo.png
+          test -f NOTICE
+          test -f LICENSE
+      - name: Gradle GUI and core tests
+        if: steps.check.outputs.ready == 'true'
+        run: ./gradlew --no-daemon :jadx-gui:test :jadx-core:test
