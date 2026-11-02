@@ -74,16 +74,16 @@ jobs:
         run: |
           $out = Join-Path (Get-Location) "release-output"
           $portable = Join-Path $out "DEXRIVA-1.0.0-portable.exe"
-          & $portable /S
-          if ($LASTEXITCODE -ne 0) { throw "Portable extraction failed: $LASTEXITCODE" }
+          $portableProcess = Start-Process -FilePath $portable -ArgumentList "/S" -Wait -PassThru
+          if ($portableProcess.ExitCode -ne 0) { throw "Portable extraction failed: $($portableProcess.ExitCode)" }
           if (!(Test-Path (Join-Path $out "DEXRIVA-Portable/DEXRIVA.exe"))) { throw "Portable launcher missing" }
           $setup = Join-Path $out "DEXRIVA-1.0.0-setup.exe"
-          & $setup /S
-          if ($LASTEXITCODE -ne 0) { throw "Silent installer failed: $LASTEXITCODE" }
+          $setupProcess = Start-Process -FilePath $setup -ArgumentList "/S" -Wait -PassThru
+          if ($setupProcess.ExitCode -ne 0) { throw "Silent installer failed: $($setupProcess.ExitCode)" }
           $installed = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/DEXRIVA.exe"
           if (!(Test-Path $installed)) { throw "Installed EXE missing" }
           $uninstall = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/Uninstall.exe"
-          if (Test-Path $uninstall) { & $uninstall /S }
+          if (Test-Path $uninstall) { Start-Process -FilePath $uninstall -ArgumentList "/S" -Wait | Out-Null }
       - name: Publish Windows artifacts
         uses: actions/upload-artifact@v4
         with:
