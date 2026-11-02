@@ -106,6 +106,23 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertTrue((ROOT / ".dexrive/make_icons.py").exists())
         self.assertFalse((ROOT / ".dexriva").exists())
 
+    def test_distribution_uses_dexrive_executable_and_keeps_notices(self):
+        build = (ROOT / "build.gradle.kts").read_text(encoding="utf-8")
+        self.assertIn('path == "bin/dexrive"', build)
+        self.assertNotIn('path == "bin/jadx"', build)
+        self.assertIn('group = "dexrive"', build)
+        self.assertIn('include("BRAND_NOTICE.md")', build)
+        self.assertIn('include("NOTICE")', build)
+        cli = (ROOT / "dexrive-cli/build.gradle.kts").read_text(encoding="utf-8")
+        self.assertIn('applicationName = "dexrive"', cli)
+
+    def test_windows_installer_uses_generated_dexrive_branding(self):
+        installer = (ROOT / "packaging/windows/dexrive-setup.nsi").read_text(encoding="utf-8")
+        self.assertIn('dexrive-welcome.bmp', installer)
+        self.assertIn('dexrive-header.bmp', installer)
+        self.assertNotIn('dexriva-welcome.bmp', installer)
+        self.assertNotIn('dexriva-header.bmp', installer)
+
     def test_legal_provenance_and_brand_credit(self):
         brand_notice = (ROOT / "BRAND_NOTICE.md").read_text(encoding="utf-8")
         self.assertIn("Brendigo", brand_notice)
