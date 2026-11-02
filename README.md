@@ -44,6 +44,20 @@
 
 Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **DEXRIVE 1.1.0 setup and portable builds are published.** Release 1.2.0 is configured to publish Windows setup, portable and Android debug APK / unsigned AAB only after both platforms pass CI. The current Windows binaries are unsigned (no Authenticode certificate). Android debug APKs and unsigned AABs are for development and require production signing before Google Play distribution.
 
+## Command-line edition
+
+DEXRIVE also provides a local CLI for scripts and automated analysis. The user-facing command is `dexrive` (not the inherited launcher name):
+
+```sh
+dexrive --help
+dexrive -d output app.apk
+dexrive --log-level ERROR app.apk
+```
+
+Use the `DEXRIVE_` environment variable prefix, for example `DEXRIVE_CONFIG_DIR`, `DEXRIVE_CACHE_DIR`, `DEXRIVE_TMP_DIR` and `DEXRIVE_ZIP_MAX_ENTRIES_COUNT`. The DEXRIVE names take precedence when both new and inherited variable names are configured. The inherited `JADX_` aliases remain accepted for existing scripts and plug-ins. **Keep ZIP and XML security checks enabled for untrusted input.**
+
+The underlying binary APIs, class names and legacy project file formats have intentionally not been bulk-renamed. Changing them without compatibility adapters would break existing files and extensions; see [module migration notes](docs/MODULE_MIGRATION.md).
+
 ## Brand identity
 
 | Property | Identity |
