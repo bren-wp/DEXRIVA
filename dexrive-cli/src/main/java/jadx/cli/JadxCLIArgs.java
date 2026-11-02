@@ -185,14 +185,14 @@ public class JadxCLIArgs implements IJadxConfig {
 	@JadxConfigExclude
 	@Parameter(
 			names = { "--deobf-cfg-file" },
-			description = "deobfuscation mappings file used for JADX auto-generated names (in the JOBF file format),"
+			description = "deobfuscation mappings file for generated names (in the JOBF file format),"
 					+ " default: same dir and name as input file with '.jobf' extension"
 	)
 	protected String generatedRenamesMappingFile;
 
 	@Parameter(
 			names = { "--deobf-cfg-file-mode" },
-			description = "set mode for handling the JADX auto-generated names' deobfuscation map file:"
+			description = "set mode for handling the generated names' deobfuscation map file:"
 					+ "\n 'read' - read if found, don't save (default)"
 					+ "\n 'read-or-save' - read if found, save otherwise (don't overwrite)"
 					+ "\n 'overwrite' - don't read, always save"
@@ -346,11 +346,11 @@ public class JadxCLIArgs implements IJadxConfig {
 	protected String saveConfig = null;
 
 	@JadxConfigExclude
-	@Parameter(names = { "--print-files" }, description = "print files and directories used by jadx (config, cache, temp)")
+	@Parameter(names = { "--print-files" }, description = "print files and directories used by DEXRIVE (config, cache, temp)")
 	protected boolean printFiles = false;
 
 	@JadxConfigExclude
-	@Parameter(names = { "--version" }, description = "print jadx version")
+	@Parameter(names = { "--version" }, description = "print DEXRIVE version")
 	protected boolean printVersion = false;
 
 	@JadxConfigExclude
@@ -439,7 +439,7 @@ public class JadxCLIArgs implements IJadxConfig {
 	}
 
 	private static void printFilesAndDirs(String defaultConfigFileName) {
-		System.out.println("Files and directories used by jadx:");
+		System.out.println("Files and directories used by DEXRIVE:");
 		System.out.println(" - default config file: " + JadxCommonFiles.getConfigDir().resolve(defaultConfigFileName).toAbsolutePath());
 		System.out.println(" - config directory:    " + JadxCommonFiles.getConfigDir().toAbsolutePath());
 		System.out.println(" - cache directory:     " + JadxCommonFiles.getCacheDir().toAbsolutePath());
