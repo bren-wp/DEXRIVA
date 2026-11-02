@@ -14,7 +14,8 @@ Unicode true
 RequestExecutionLevel user
 SetCompressor /SOLID lzma
 Icon "${ICONROOT}"
-SilentInstall silent
+SilentInstall normal
+Page instfiles
 AutoCloseWindow true
 Section "Portable launch"
   ; Extract next to the launcher, never use Program Files, registry, or an administrator account.
