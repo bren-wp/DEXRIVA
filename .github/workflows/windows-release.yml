@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: '21'
       - name: Create branded icon
         run: python .dexriva/make_windows_ico.py
       - name: Build Windows launcher and bundled runtime
