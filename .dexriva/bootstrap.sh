@@ -25,6 +25,7 @@ fi
 rsync -a --exclude='.git/' --exclude='.github/' --exclude='.run/' --exclude='README.md' "$tmp/jadx/" ./
 python3 .dexriva/make_icons.py
 python3 .dexriva/rebrand.py
+echo 'Starting DEXRIVA smoke tests'
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 test -f LICENSE && test -f NOTICE && test -f jadx-core/build.gradle.kts
 echo "Upstream import and DEXRIVA patches completed."
