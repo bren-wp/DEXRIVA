@@ -29,12 +29,12 @@ public class AboutDialog extends JDialog {
 
 	public final void initUI() {
 		URL logoURL = getClass().getResource("/logos/dexriva-logo-48px.png");
-		Icon logo = new ImageIcon(logoURL, "DEXRIVA icon");
+		Icon logo = new ImageIcon(logoURL, "DEXRIVE icon");
 
-		JLabel name = new JLabel("DEXRIVA", logo, SwingConstants.CENTER);
+		JLabel name = new JLabel("DEXRIVE", logo, SwingConstants.CENTER);
 		name.setAlignmentX(0.5f);
 
-		JLabel desc = new JLabel("Android Code Explorer  |  Local analysis");
+		JLabel desc = new JLabel("Android Code Explorer  |  by Brendigo");
 		desc.setAlignmentX(0.5f);
 
 		JLabel version = new JLabel("Engine build: " + JadxDecompiler.getVersion());
@@ -59,6 +59,9 @@ public class AboutDialog extends JDialog {
 		textPane.add(name);
 		textPane.add(Box.createRigidArea(new Dimension(0, 10)));
 		textPane.add(desc);
+		JLabel website = new JLabel("brendigo.com");
+		website.setAlignmentX(0.5f);
+		textPane.add(website);
 		textPane.add(Box.createRigidArea(new Dimension(0, 10)));
 		textPane.add(version);
 		textPane.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -78,7 +81,7 @@ public class AboutDialog extends JDialog {
 
 		setModalityType(ModalityType.APPLICATION_MODAL);
 
-		setTitle("About DEXRIVA");
+		setTitle("About DEXRIVE");
 		pack();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);

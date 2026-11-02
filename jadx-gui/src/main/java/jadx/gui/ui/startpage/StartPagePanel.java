@@ -69,18 +69,18 @@ public class StartPagePanel extends ContentPanel {
         JPanel top = new JPanel(new BorderLayout(16, 12));
         top.setOpaque(false);
         JLabel logo = new JLabel(new ImageIcon(UiUtils.openImage("/logos/dexriva-logo-48px.png")));
-        logo.getAccessibleContext().setAccessibleDescription("DEXRIVA brand mark");
+        logo.getAccessibleContext().setAccessibleDescription("DEXRIVE brand mark");
         top.add(logo, BorderLayout.WEST);
         JPanel headings = new JPanel();
         headings.setOpaque(false);
         headings.setLayout(new BoxLayout(headings, BoxLayout.PAGE_AXIS));
-        JLabel title = new JLabel("DEXRIVA");
+        JLabel title = new JLabel("DEXRIVE");
         title.setForeground(AQUA);
         title.setFont(font.deriveFont(Font.BOLD, Math.max(28f, font.getSize2D() * 2.25f)));
         title.setAlignmentX(LEFT_ALIGNMENT);
         headings.add(title);
         headings.add(Box.createVerticalStrut(5));
-        JLabel caption = new JLabel("Your Android analysis workspace");
+        JLabel caption = new JLabel("Explore beyond the source.  •  by Brendigo");
         caption.setFont(font.deriveFont(Math.max(13f, font.getSize2D())));
         caption.setForeground(MUTED);
         caption.setAlignmentX(LEFT_ALIGNMENT);
@@ -93,7 +93,7 @@ public class StartPagePanel extends ContentPanel {
         openPackage.addActionListener(e -> mainWindow.openFileDialog());
         JButton openWorkspace = action("Open project", "Continue your analysis", Icons.OPEN_PROJECT, font);
         openWorkspace.addActionListener(e -> mainWindow.openProjectDialog());
-        JButton inspect = action("APK Inspector", "Local package overview", Icons.DEXRIVA_INSPECTOR, font);
+        JButton inspect = action("APK Inspector", "Local package overview", Icons.DEXRIVE_INSPECTOR, font);
         inspect.addActionListener(e -> DexrivaInspector.open(mainWindow));
         actionGrid.add(openPackage);
         actionGrid.add(openWorkspace);
@@ -166,7 +166,7 @@ public class StartPagePanel extends ContentPanel {
         recentCard.add(scrollPane, BorderLayout.CENTER);
 
         layout.add(recentCard, BorderLayout.CENTER);
-        JLabel privacy = new JLabel("LOCAL WORKSPACE  /  Files remain on this device");
+        JLabel privacy = new JLabel("LOCAL WORKSPACE  •  by Brendigo  •  brendigo.com");
         privacy.setForeground(MUTED);
         privacy.setFont(font.deriveFont(Font.PLAIN, Math.max(11f, font.getSize2D() - 1)));
         layout.add(privacy, BorderLayout.SOUTH);

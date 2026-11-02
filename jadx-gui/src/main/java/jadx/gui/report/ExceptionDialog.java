@@ -48,9 +48,9 @@ public class ExceptionDialog extends JDialog {
 	}
 
 	private ExceptionDialog(@Nullable MainWindow mainWindow, ExceptionData data) {
-		super(mainWindow, "DEXRIVA — Application error");
+		super(mainWindow, "DEXRIVE — Application error");
 		JPanel titlePanel = new JPanel(new BorderLayout());
-		JLabel titleLabel = new JLabel("<html><h2>" + "DEXRIVA encountered an unexpected error" + "</h2></html>");
+		JLabel titleLabel = new JLabel("<html><h2>" + "DEXRIVE encountered an unexpected error" + "</h2></html>");
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titlePanel.add(titleLabel, BorderLayout.CENTER);
 

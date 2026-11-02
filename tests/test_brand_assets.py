@@ -1,4 +1,4 @@
-"""DEXRIVA bootstrap smoke tests. Run after importing pinned JADX."""
+"""DEXRIVE bootstrap smoke tests. Run after importing pinned JADX."""
 import struct
 import unittest
 from pathlib import Path
@@ -13,14 +13,14 @@ class BrandIntegrationTest(unittest.TestCase):
 
     def test_about_upstream_attribution(self):
         content = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/dialog/AboutDialog.java").read_text()
-        self.assertIn("DEXRIVA", content)
+        self.assertIn("DEXRIVE", content)
         self.assertNotIn("Based on open-source JADX", content)
         self.assertNotIn("JADX logo", content)
 
     def test_splash_and_workspace_are_branded(self):
         splash = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/DexrivaSplash.java").read_text()
         home = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/startpage/StartPagePanel.java").read_text()
-        self.assertIn("DEXRIVA", splash)
+        self.assertIn("DEXRIVE", splash)
         self.assertIn("PREPARING WORKSPACE", splash)
         self.assertIn("Open package", home)
         self.assertIn("APK Inspector", home)
@@ -43,7 +43,7 @@ class BrandIntegrationTest(unittest.TestCase):
     def test_native_inspector_in_tools_menu(self):
         content = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/MainWindow.java").read_text()
         self.assertIn("DexrivaInspector.open(this)", content)
-        self.assertIn('DEFAULT_TITLE = "DEXRIVA"', content)
+        self.assertIn('DEFAULT_TITLE = "DEXRIVE"', content)
 
     def test_generated_png_icons(self):
         logos = ROOT / "jadx-gui/src/main/resources/logos"

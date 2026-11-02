@@ -196,7 +196,7 @@ import jadx.gui.utils.ui.NodeLabel;
 public class MainWindow extends JFrame implements IMainWindow {
 	private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
-	private static final String DEFAULT_TITLE = "DEXRIVA";
+	private static final String DEFAULT_TITLE = "DEXRIVE • Brendigo";
 
 	private static final double BORDER_RATIO = 0.15;
 	private static final double WINDOW_RATIO = 1 - BORDER_RATIO * 2;
@@ -1263,7 +1263,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 		tools.add(deobfMenuItem);
 		tools.add(quarkAction);
 		tools.add(debuggerAction);
-		JMenuItem inspectorItem = new JMenuItem("DEXRIVA APK Inspector");
+		JMenuItem inspectorItem = new JMenuItem("DEXRIVE APK Inspector");
 		inspectorItem.addActionListener(event -> DexrivaInspector.open(this));
 		tools.add(inspectorItem);
 

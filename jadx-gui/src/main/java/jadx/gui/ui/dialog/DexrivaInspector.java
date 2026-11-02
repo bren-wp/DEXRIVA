@@ -46,13 +46,13 @@ public final class DexrivaInspector {
      */
     public static void open(Component parent) {
         JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(parent),
-                "DEXRIVA | APK Inspector", Dialog.ModalityType.MODELESS);
+                "DEXRIVE | APK Inspector", Dialog.ModalityType.MODELESS);
         JPanel content = new JPanel(new BorderLayout(0, 16));
         content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel title = new JLabel("APK INSPECTOR");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 23f));
-        JLabel subtitle = new JLabel("Private local analysis of Android package archives");
+        JLabel subtitle = new JLabel("Local package analysis • by Brendigo");
         JPanel header = new JPanel(new BorderLayout(0, 6));
         header.add(title, BorderLayout.NORTH);
         header.add(subtitle, BorderLayout.SOUTH);
@@ -78,7 +78,7 @@ public final class DexrivaInspector {
 
         choose.addActionListener(event -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("DEXRIVA | Choose Android package");
+            chooser.setDialogTitle("DEXRIVE | Choose Android package");
             chooser.setFileFilter(new FileNameExtensionFilter(
                     "Android packages (*.apk, *.aab, *.apks, *.apkm, *.xapk, *.zip)",
                     "apk", "aab", "apks", "apkm", "xapk", "zip"));
@@ -200,7 +200,7 @@ public final class DexrivaInspector {
             }
         }
         StringBuilder out = new StringBuilder();
-        out.append("DEXRIVA | LOCAL ARCHIVE INSPECTION\n");
+        out.append("DEXRIVE | LOCAL ARCHIVE INSPECTION\n");
         out.append("=================================\n");
         out.append("File: ").append(path.getFileName()).append('\n');
         out.append("Archive bytes: ").append(Files.size(path)).append('\n');

@@ -93,6 +93,8 @@ public class LafManager {
 			UIManager.put("TabbedPane.showTabSeparators", Boolean.FALSE);
 			UIManager.put("Table.showHorizontalLines", Boolean.FALSE);
 			UIManager.put("Component.arc", 12);
+			UIManager.put("TitlePane.unifiedBackground", Boolean.TRUE);
+			UIManager.put("TitlePane.centerTitle", Boolean.FALSE);
 			DockingUI.initialize();
 			return true;
 		} catch (Exception e) {

@@ -1,6 +1,5 @@
 package jadx.gui.ui;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,7 +16,7 @@ import javax.swing.JPanel;
 import jadx.gui.utils.UiUtils;
 
 /**
- * DEXRIVA startup identity. Uses original Java2D shapes, no third-party brand assets.
+ * DEXRIVE startup identity. Uses original Java2D shapes, no third-party brand assets.
  * Shown only while the main desktop window is being initialized; no artificial delay.
  */
 public final class DexrivaSplash extends JWindow {
@@ -33,7 +32,7 @@ public final class DexrivaSplash extends JWindow {
         setSize(Math.min(560, Math.max(320, screen.width - 40)),
                 Math.min(312, Math.max(230, screen.height - 60)));
         setLocationRelativeTo(null);
-        getAccessibleContext().setAccessibleName("DEXRIVA starting");
+        getAccessibleContext().setAccessibleName("DEXRIVE starting");
     }
 
     private static final class SplashCanvas extends JPanel {
@@ -74,7 +73,7 @@ public final class DexrivaSplash extends JWindow {
 
                 g.setColor(new Color(0xF3F7FB));
                 g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 42));
-                g.drawString("DEXRIVA", 168, 115);
+                g.drawString("DEXRIVE", 168, 115);
                 g.setColor(AQUA);
                 g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
                 g.drawString("ANDROID CODE EXPLORER", 171, 145);
@@ -90,7 +89,7 @@ public final class DexrivaSplash extends JWindow {
                 g.setColor(MUTED);
                 g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
                 g.drawString("PREPARING WORKSPACE", 47, 281);
-                g.drawString("1.0", 484, 281);
+                g.drawString("Brendigo", 478, 281);
             } finally {
                 g.dispose();
             }

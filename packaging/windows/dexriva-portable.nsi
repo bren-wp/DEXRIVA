@@ -9,13 +9,13 @@
   !error "ICONROOT missing"
 !endif
 
-Name "DEXRIVA Portable 1.0.0"
-OutFile "${OUTDIR}\DEXRIVA-1.0.0-portable.exe"
+Name "DEXRIVE Portable 1.0.0"
+OutFile "${OUTDIR}\DEXRIVE-1.0.0-portable.exe"
 Unicode true
 RequestExecutionLevel user
 SetCompressor /SOLID lzma
 Icon "${ICONROOT}"
-BrandingText "DEXRIVA Portable"
+BrandingText "DEXRIVE Portable  •  Brendigo"
 
 ; No wizard, no registry entries, no shortcuts, no administrative permissions.
 ; The portable EXE contains the app/runtime and silently extracts beside itself.
@@ -25,12 +25,12 @@ AutoCloseWindow true
 !insertmacro GetOptions
 
 Section "Portable launch"
-  IfFileExists "$EXEDIR\DEXRIVA-Portable\DEXRIVA.exe" ready
-  SetOutPath "$EXEDIR\DEXRIVA-Portable"
+  IfFileExists "$EXEDIR\DEXRIVE-Portable\DEXRIVE.exe" ready
+  SetOutPath "$EXEDIR\DEXRIVE-Portable"
   ClearErrors
   File /r "${APPROOT}\*"
   IfErrors 0 ready
-  MessageBox MB_ICONSTOP "Unable to extract DEXRIVA beside the portable executable. Choose a writable folder."
+  MessageBox MB_ICONSTOP "Unable to extract DEXRIVE beside the portable executable. Choose a writable folder."
   Abort
 ready:
   ; /S is used only by CI and enterprise silent extraction.
@@ -39,6 +39,6 @@ ready:
   IfErrors normal
   Goto done
 normal:
-  Exec '"$EXEDIR\DEXRIVA-Portable\DEXRIVA.exe"'
+  Exec '"$EXEDIR\DEXRIVE-Portable\DEXRIVE.exe"'
 done:
 SectionEnd
