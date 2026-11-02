@@ -1,7 +1,9 @@
-name: DEXRIVA Windows 1.0.0
+name: DEXRIVE Windows 1.1.0
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -9,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: dexriva-windows-1.0.0
+  group: dexriva-windows-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -17,15 +19,18 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 100
     env:
-      JADX_VERSION: 1.0.0
+      DEXRIVE_VERSION: 1.1.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-      - name: Create branded icon
-        run: python .dexriva/make_windows_ico.py
+      - name: Generate original DEXRIVA installer artwork and icon
+        shell: pwsh
+        run: |
+          python .dexriva/make_windows_ico.py
+          python .dexriva/make_setup_artwork.py
       - name: Build Windows launcher and bundled runtime
         shell: pwsh
         run: |
@@ -38,11 +43,11 @@ jobs:
         shell: pwsh
         run: |
           $root = "jadx-gui/build/jadx-gui-with-jre-win"
-          if (!(Test-Path "$root/DEXRIVA.exe")) { throw "DEXRIVA.exe missing" }
+          if (!(Test-Path "$root/DEXRIVE.exe")) { throw "DEXRIVE.exe missing" }
           if (!(Test-Path "$root/jre/bin/javaw.exe")) { throw "Bundled Java runtime missing" }
           if (!(Get-ChildItem "$root/lib/*.jar")) { throw "GUI library missing" }
-          Copy-Item LICENSE,NOTICE,README.md $root -Force
-          $exe = Join-Path (Resolve-Path $root) "DEXRIVA.exe"
+          Copy-Item LICENSE,NOTICE,BRAND_NOTICE.md,README.md $root -Force
+          $exe = Join-Path (Resolve-Path $root) "DEXRIVE.exe"
           $p = Start-Process -FilePath $exe -ArgumentList "--help" -PassThru -Wait
           if ($p.ExitCode -ne 0) { throw "Launcher smoke test failed: $($p.ExitCode)" }
       - name: Install NSIS packaging compiler
@@ -53,16 +58,17 @@ jobs:
         run: |
           $root = (Resolve-Path "jadx-gui/build/jadx-gui-with-jre-win").Path
           $icon = (Resolve-Path "jadx-gui/dist/windows/dexriva.ico").Path
+          $branding = (Resolve-Path "packaging/windows/branding").Path
           $out = Join-Path (Get-Location) "release-output"
           New-Item -ItemType Directory -Force $out | Out-Null
           $compiler = "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
           if (!(Test-Path $compiler)) { $compiler = (Get-Command makensis.exe -ErrorAction Stop).Source }
           & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexriva-portable.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Portable packaging failed" }
-          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "packaging/windows/dexriva-setup.nsi"
+          & $compiler "/DAPPROOT=$root" "/DOUTDIR=$out" "/DICONROOT=$icon" "/DBRANDROOT=$branding" "packaging/windows/dexriva-setup.nsi"
           if ($LASTEXITCODE -ne 0) { throw "Setup packaging failed" }
           Get-ChildItem $out
-          foreach ($file in @("DEXRIVA-1.0.0-portable.exe","DEXRIVA-1.0.0-setup.exe")) {
+          foreach ($file in @("DEXRIVE-1.1.0-portable.exe","DEXRIVE-1.1.0-setup.exe")) {
             $p = Join-Path $out $file
             if (!(Test-Path $p)) { throw "Missing package: $file" }
             if ((Get-Item $p).Length -lt 1000000) { throw "Incomplete package: $file" }
@@ -73,36 +79,39 @@ jobs:
         shell: pwsh
         run: |
           $out = Join-Path (Get-Location) "release-output"
-          $portable = Join-Path $out "DEXRIVA-1.0.0-portable.exe"
+          $portable = Join-Path $out "DEXRIVE-1.1.0-portable.exe"
           $portableProcess = Start-Process -FilePath $portable -ArgumentList "/S" -Wait -PassThru
           if ($portableProcess.ExitCode -ne 0) { throw "Portable extraction failed: $($portableProcess.ExitCode)" }
-          if (!(Test-Path (Join-Path $out "DEXRIVA-Portable/DEXRIVA.exe"))) { throw "Portable launcher missing" }
-          $setup = Join-Path $out "DEXRIVA-1.0.0-setup.exe"
+          if (!(Test-Path (Join-Path $out "DEXRIVE-Portable/DEXRIVE.exe"))) { throw "Portable launcher missing" }
+          $setup = Join-Path $out "DEXRIVE-1.1.0-setup.exe"
           $setupProcess = Start-Process -FilePath $setup -ArgumentList "/S" -Wait -PassThru
           if ($setupProcess.ExitCode -ne 0) { throw "Silent installer failed: $($setupProcess.ExitCode)" }
-          $installed = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/DEXRIVA.exe"
+          $installed = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/DEXRIVE.exe"
           if (!(Test-Path $installed)) { throw "Installed EXE missing" }
-          $uninstall = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVA/Uninstall.exe"
+          if (!(Test-Path (Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/LICENSE"))) { throw "License missing from setup" }
+          if (!(Test-Path (Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/NOTICE"))) { throw "Required NOTICE missing from setup" }
+          if (!(Test-Path (Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/BRAND_NOTICE.md"))) { throw "Brendigo notice missing from setup" }
+          $uninstall = Join-Path $env:LOCALAPPDATA "Programs/DEXRIVE/Uninstall.exe"
           if (Test-Path $uninstall) { Start-Process -FilePath $uninstall -ArgumentList "/S" -Wait | Out-Null }
       - name: Publish Windows artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DEXRIVA-1.0.0-Windows
-          path: release-output/DEXRIVA-1.0.0-*.exe
+          name: DEXRIVE-1.1.0-Windows
+          path: release-output/DEXRIVE-1.1.0-*.exe
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
-      - name: Create GitHub Release 1.0.0 after validation
-        if: github.ref == 'refs/heads/main'
+      - name: Create GitHub Release 1.1.0 after validation
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $files = @("release-output/DEXRIVA-1.0.0-portable.exe","release-output/DEXRIVA-1.0.0-setup.exe")
-          gh release view v1.0.0 --repo $env:GITHUB_REPOSITORY *> $null
+          $files = @("release-output/DEXRIVE-1.1.0-portable.exe","release-output/DEXRIVE-1.1.0-setup.exe")
+          gh release view v1.1.0 --repo $env:GITHUB_REPOSITORY *> $null
           if ($LASTEXITCODE -eq 0) {
-            Write-Host "Release v1.0.0 already exists. Refusing to overwrite immutable release binaries."
+            Write-Host "Release v1.1.0 already exists. Refusing to overwrite immutable release binaries."
             exit 0
           }
-          gh release create v1.0.0 $files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "DEXRIVA 1.0.0" --notes-file "docs/RELEASE_1.0.0.md"
+          gh release create v1.1.0 $files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "DEXRIVE 1.1.0" --notes-file "docs/RELEASE_1.1.0.md"
           if ($LASTEXITCODE -ne 0) { throw "GitHub release creation failed" }

@@ -1,6 +1,6 @@
-# DEXRIVA APK Inspector (Android)
+# DEXRIVE APK Inspector (Android)
 
-Separate native Kotlin/Jetpack Compose app, preview version **0.1.0**, independent of Windows 1.0.0.
+Separate native Kotlin/Jetpack Compose app, preview version **0.2.0**, independent of Windows 1.0.0.
 
 Choose APK/AAB/ZIP using Android's Storage Access Framework. Calculates a local SHA-256 hash, counts DEX files and native libraries, reports manifest presence and potential archive-path issues. ZIP metadata only: does not extract, upload or execute app code. No internet/storage permissions.
 

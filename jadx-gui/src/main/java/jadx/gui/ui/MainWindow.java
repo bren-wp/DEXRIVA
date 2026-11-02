@@ -176,14 +176,12 @@ import jadx.gui.ui.tab.TabbedPane;
 import jadx.gui.ui.tab.TabsController;
 import jadx.gui.ui.treenodes.SummaryNode;
 import jadx.gui.ui.treenodes.UndisplayedStringsNode;
-import jadx.gui.update.JadxUpdate;
 import jadx.gui.utils.CacheObject;
 import jadx.gui.utils.DesktopEntryUtils;
 import jadx.gui.utils.FontUtils;
 import jadx.gui.utils.ILoadListener;
 import jadx.gui.utils.Icons;
 import jadx.gui.utils.LafManager;
-import jadx.gui.utils.Link;
 import jadx.gui.utils.NLS;
 import jadx.gui.utils.TextStandardActions;
 import jadx.gui.utils.UiUtils;
@@ -198,7 +196,7 @@ import jadx.gui.utils.ui.NodeLabel;
 public class MainWindow extends JFrame implements IMainWindow {
 	private static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
-	private static final String DEFAULT_TITLE = "DEXRIVA";
+	private static final String DEFAULT_TITLE = "DEXRIVE • Brendigo";
 
 	private static final double BORDER_RATIO = 0.15;
 	private static final double WINDOW_RATIO = 1 - BORDER_RATIO * 2;
@@ -241,7 +239,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 	private JCheckBoxMenuItem liveReloadMenuItem;
 	private final LiveReloadWorker liveReloadWorker;
 
-	private transient Link updateLink;
 	private transient ProgressPanel progressPane;
 
 	private transient IssuesPanel issuesPanel;
@@ -298,7 +295,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 		initEvents();
 
 		update();
-		checkForUpdate();
 	}
 
 	public void init() {
@@ -338,24 +334,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 			}
 			tabsController.codeJump(cacheObject.getNodeCache().makeFrom(javaNode));
 		}
-	}
-
-	private void checkForUpdate() {
-		if (!settings.isCheckForUpdates()) {
-			return;
-		}
-		new JadxUpdate().check(settings.getJadxUpdateChannel(), release -> SwingUtilities.invokeLater(() -> {
-			switch (settings.getJadxUpdateChannel()) {
-				case STABLE:
-					updateLink.setUrl(JadxUpdate.JADX_RELEASES_URL);
-					break;
-				case UNSTABLE:
-					updateLink.setUrl(JadxUpdate.JADX_ARTIFACTS_URL);
-					break;
-			}
-			updateLink.setText(NLS.str("menu.update_label", release.getName()));
-			updateLink.setVisible(true);
-		}));
 	}
 
 	public void openFileDialog() {
@@ -1285,7 +1263,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 		tools.add(deobfMenuItem);
 		tools.add(quarkAction);
 		tools.add(debuggerAction);
-		JMenuItem inspectorItem = new JMenuItem("DEXRIVA APK Inspector");
+		JMenuItem inspectorItem = new JMenuItem("DEXRIVE APK Inspector");
 		inspectorItem.addActionListener(event -> DexrivaInspector.open(this));
 		tools.add(inspectorItem);
 
@@ -1332,8 +1310,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 		flatPkgButton.addActionListener(flatPkgAction);
 		flatPkgButton.setToolTipText(NLS.str("menu.flatten"));
 
-		updateLink = new Link();
-		updateLink.setVisible(false);
 
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
@@ -1368,7 +1344,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 		toolbar.add(prefsAction);
 		toolbar.addSeparator();
 		toolbar.add(Box.createHorizontalGlue());
-		toolbar.add(updateLink);
 
 		mainPanel.add(toolbar, BorderLayout.NORTH);
 

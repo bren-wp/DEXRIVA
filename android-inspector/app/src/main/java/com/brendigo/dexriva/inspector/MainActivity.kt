@@ -44,8 +44,9 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        Text("DEXRIVA", fontSize = 30.sp, color = aqua)
+                        Text("DEXRIVE", fontSize = 30.sp, color = aqua)
                         Text("ANDROID APK INSPECTOR", fontSize = 19.sp)
+                        Text("by Brendigo  •  brendigo.com", fontSize = 13.sp, color = Color(0xFFA7B7C9))
                         Text("Offline ZIP metadata inspection • No network or storage permissions.")
                         Button(onClick = { picker.launch(arrayOf("*/*")) }, enabled = !loading,
                             modifier = Modifier.fillMaxWidth()) { Text("Open Android package") }

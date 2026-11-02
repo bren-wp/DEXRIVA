@@ -35,6 +35,9 @@ jobs:
           test -f jadx-gui/src/main/resources/logos/dexriva-logo.png
           test -f NOTICE
           test -f LICENSE
+      - name: Brand and licensing smoke checks
+        if: steps.check.outputs.ready == 'true'
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Gradle GUI and core tests
         if: steps.check.outputs.ready == 'true'
         run: ./gradlew --no-daemon :jadx-gui:test :jadx-core:test

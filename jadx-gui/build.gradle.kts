@@ -144,7 +144,7 @@ tasks.startShadowScripts {
 			windowsScript
 				.readText()
 				.replace("java.exe", "javaw.exe")
-				.replace("\"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%", "start \"jadx-gui\" /B \"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%")
+				.replace("\"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%", "start \"DEXRIVE\" /B \"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%")
 		// Add launch script path as a property
 		val newUnixScriptContent =
 			unixScript
@@ -163,16 +163,16 @@ launch4j {
 	copyConfigurable.set(listOf<Any>())
 	dontWrapJar.set(true)
 	icon.set("$projectDir/dist/windows/dexriva.ico")
-	outfile.set("DEXRIVA.exe")
-	version.set(jadxVersion)
-	copyright.set("JADX contributors and DEXRIVA contributors")
-	windowTitle.set("DEXRIVA")
-	companyName.set("DEXRIVA Project")
+	outfile.set("DEXRIVE.exe")
+	version.set("1.1.0")
+	copyright.set("DEXRIVE enhancements © Brendigo; upstream notices retained")
+	windowTitle.set("DEXRIVE")
+	companyName.set("Brendigo")
 	jreMinVersion.set("11")
 	jvmOptions.set(escapeJVMOptions())
 	requires64Bit.set(true)
 	downloadUrl.set("https://www.oracle.com/java/technologies/downloads/#jdk21-windows")
-	supportUrl.set("https://github.com/bren-wp/DEXRIVA")
+	supportUrl.set("https://brendigo.com")
 
 	bundledJrePath.set(if (project.hasProperty("bundleJRE")) "%EXEDIR%/jre" else "%JAVA_HOME%")
 	classpath.set(
@@ -206,7 +206,7 @@ runtime {
 	jpackage {
 		val os = DefaultNativePlatform.getCurrentOperatingSystem()
 		if (os.isMacOsX) {
-			imageName = "jadx-gui"
+			imageName = "DEXRIVE"
 			val fileAssociations =
 				fileTree("$projectDir/dist/macos/jpackage-file-associations") { include("*.properties") }
 					.files
@@ -215,19 +215,19 @@ runtime {
 			imageOptions =
 				listOf(
 					"--icon",
-					"$projectDir/dist/macos/jadx-logo.icns",
+					"$projectDir/dist/macos/dexriva-logo.icns",
 					"--mac-package-identifier",
-					"io.github.skylot.jadx",
+					"com.brendigo.dexrive",
 				) + fileAssociations
 			// jpackage on macOS requires version as up to three integers separated by dots
 			appVersion = if (jadxVersion.matches(Regex("\\d+(\\.\\d+){0,2}"))) jadxVersion else "1.0.0"
 			installerType = "dmg"
-			installerName = "jadx-gui"
+			installerName = "DEXRIVE"
 			skipInstaller = false
 		} else if (os.isWindows) {
 			// WiX Toolset required
 			appVersion = if (jadxVersion.matches(Regex("\\d+(\\.\\d+){0,2}"))) jadxVersion else "0.0.0"
-			imageOptions = listOf("--icon", "$projectDir/dist/windows/jadx-logo.ico")
+			imageOptions = listOf("--icon", "$projectDir/dist/windows/dexriva.ico")
 			skipInstaller = false
 			installerType = "msi"
 			installerOptions =

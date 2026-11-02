@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-label="APK Inspector">
+ <rect width="360" height="360" rx="20" fill="#132336"/><rect x="12" y="12" width="336" height="336" rx="15" stroke="#38556A" fill="none"/>
+ <path d="M160 72 228 106v55c0 68-28 107-68 125-40-18-68-57-68-125v-55Z" fill="none" stroke="#34D9D0" stroke-width="9"/><path d="m124 169 26 25 55-61" fill="none" stroke="#F1F5F9" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+ <text x="180" y="305" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-weight="700" font-size="23" fill="#F1F5F9">APK Inspector</text>
+ <text x="180" y="331" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14" fill="#A2B9CA">Inspect locally</text>
+ </svg>

@@ -46,11 +46,22 @@ public class Link extends JLabel {
 	}
 
 	public void setUrl(String url) {
+		// External source-hosting links are intentionally not surfaced by DEXRIVA.
+		if (url != null && (url.startsWith("https://github.com/") || url.startsWith("http://github.com/"))) {
+			this.url = null;
+			setText("");
+			setToolTipText(null);
+			setVisible(false);
+			return;
+		}
 		this.url = url;
-		setToolTipText("Open " + url + " in your browser");
+		setToolTipText(url == null ? null : "Open external link");
 	}
 
 	private void browse() {
+		if (url == null || url.isBlank()) {
+			return;
+		}
 		if (Desktop.isDesktopSupported()) {
 			Desktop desktop = Desktop.getDesktop();
 			if (desktop.isSupported(Action.BROWSE)) {

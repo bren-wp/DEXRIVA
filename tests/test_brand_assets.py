@@ -1,4 +1,4 @@
-"""DEXRIVA bootstrap smoke tests. Run after importing pinned JADX."""
+"""DEXRIVE bootstrap smoke tests. Run after importing pinned JADX."""
 import struct
 import unittest
 from pathlib import Path
@@ -13,13 +13,56 @@ class BrandIntegrationTest(unittest.TestCase):
 
     def test_about_upstream_attribution(self):
         content = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/dialog/AboutDialog.java").read_text()
-        self.assertIn("DEXRIVA", content)
-        self.assertIn("Based on open-source JADX", content)
+        self.assertIn("DEXRIVE", content)
+        self.assertNotIn("Based on open-source JADX", content)
+        self.assertNotIn("JADX logo", content)
+
+    def test_splash_and_workspace_are_branded(self):
+        splash = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/DexrivaSplash.java").read_text()
+        home = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/startpage/StartPagePanel.java").read_text()
+        self.assertIn("DEXRIVE", splash)
+        self.assertIn("PREPARING WORKSPACE", splash)
+        self.assertIn("Open package", home)
+        self.assertIn("APK Inspector", home)
+        self.assertIn("componentResized", home)
+
+    def test_upstream_logo_assets_not_shipped(self):
+        logos = ROOT / "jadx-gui/src/main/resources/logos"
+        self.assertFalse(list(logos.glob("jadx-logo*")))
+        self.assertFalse((ROOT / "jadx-gui/dist/windows/jadx-logo.ico").exists())
+        self.assertFalse((ROOT / "jadx-gui/dist/macos/jadx-logo.icns").exists())
+        self.assertTrue((ROOT / "jadx-gui/dist/macos/dexriva-logo.icns").exists())
+
+    def test_no_auto_upstream_update_or_issue_links(self):
+        main = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/MainWindow.java").read_text()
+        error = (ROOT / "jadx-gui/src/main/java/jadx/gui/report/ExceptionDialog.java").read_text()
+        self.assertNotIn("checkForUpdate();", main)
+        self.assertNotIn("github.com/", error)
+        self.assertNotIn("new JadxUpdate()", main)
+
+
+    def test_product_assets_and_attribution(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("By Brendigo", readme)
+        self.assertIn("brendigo.com", readme)
+        for path in ["assets/dexrive-mark.svg", "assets/dexrive-banner.svg",
+                     "assets/dexrive-workspace-concept.svg",
+                     "assets/feature-inspect.svg", "assets/feature-code.svg",
+                     "assets/feature-privacy.svg", "BRAND_NOTICE.md"]:
+            self.assertTrue((ROOT / path).is_file(), path)
 
     def test_native_inspector_in_tools_menu(self):
         content = (ROOT / "jadx-gui/src/main/java/jadx/gui/ui/MainWindow.java").read_text()
         self.assertIn("DexrivaInspector.open(this)", content)
-        self.assertIn('DEFAULT_TITLE = "DEXRIVA"', content)
+        self.assertIn('DEFAULT_TITLE = "DEXRIVE • Brendigo"', content)
+
+    def test_all_locales_use_new_product_name(self):
+        root = ROOT / "jadx-gui/src/main/resources/i18n"
+        for path in root.glob("Messages_*.properties"):
+            data = path.read_text(encoding="utf-8")
+            self.assertNotIn("DEXRIVA", data, str(path))
+            self.assertNotIn("Jadx is running low", data, str(path))
+            self.assertIn("start_page.title=DEXRIVE Workspace", data, str(path))
 
     def test_generated_png_icons(self):
         logos = ROOT / "jadx-gui/src/main/resources/logos"

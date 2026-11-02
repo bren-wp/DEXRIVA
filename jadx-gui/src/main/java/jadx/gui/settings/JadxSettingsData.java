@@ -50,7 +50,7 @@ public class JadxSettingsData extends JadxGUIArgs {
 	private int mainWindowExtendedState = JFrame.NORMAL;
 
 	private boolean flattenPackage = false;
-	private boolean checkForUpdates = true;
+	private boolean checkForUpdates = false;
 	private JadxUpdateChannel jadxUpdateChannel = JadxUpdateChannel.STABLE;
 
 	private float uiZoom = 1.0f;
