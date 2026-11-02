@@ -123,6 +123,21 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertNotIn('dexriva-welcome.bmp', installer)
         self.assertNotIn('dexriva-header.bmp', installer)
 
+    def test_cli_help_uses_brendigo_identity(self):
+        cli = (ROOT / "dexrive-cli/src/main/java/jadx/cli/JCommanderWrapper.java").read_text(encoding="utf-8")
+        self.assertIn("DEXRIVE by Brendigo", cli)
+        self.assertIn("usage: dexrive [command] [options]", cli)
+        self.assertIn("DEXRIVE_DISABLE_XML_SECURITY", cli)
+        self.assertNotIn('out.println("  jadx ', cli)
+        args = (ROOT / "dexrive-cli/src/main/java/jadx/cli/JadxCLIArgs.java").read_text(encoding="utf-8")
+        self.assertIn("print DEXRIVE version", args)
+
+    def test_branded_env_alias_preserves_existing_integrations(self):
+        helper = (ROOT / "dexrive-commons/dexrive-app-commons/src/main/java/jadx/commons/app/JadxCommonEnv.java").read_text(encoding="utf-8")
+        self.assertIn('varName.startsWith("JADX_")', helper)
+        self.assertIn('"DEXRIVE_" + varName.substring', helper)
+        self.assertIn("return System.getenv(varName);", helper)
+
     def test_legal_provenance_and_brand_credit(self):
         brand_notice = (ROOT / "BRAND_NOTICE.md").read_text(encoding="utf-8")
         self.assertIn("Brendigo", brand_notice)
