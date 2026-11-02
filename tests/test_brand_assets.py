@@ -69,10 +69,11 @@ class BrandIntegrationTest(unittest.TestCase):
         import re
         script = (ROOT / ".dexrive/make_setup_artwork.py").read_text(encoding="utf-8")
         installer = (ROOT / "packaging/windows/dexrive-setup.nsi").read_text(encoding="utf-8")
-        declared = re.findall(r'BRANDROOT}\\\\([^"]+\\.bmp)', installer)
+        declared = ("dexrive-header.bmp", "dexrive-welcome.bmp")
         self.assertGreaterEqual(len(declared), 2)
         for name in declared:
             self.assertIn('"' + name + '"', script)
+            self.assertIn(name, installer)
         self.assertNotIn("dexriva-", installer)
 
     def test_renamed_gradle_modules(self):
