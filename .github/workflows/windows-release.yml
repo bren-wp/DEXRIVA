@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: dexriva-windows-1.0.0
+  group: dexriva-windows-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
