@@ -162,6 +162,19 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertIn("UiUtils.setWindowIcons(dialog)", inspector)
         self.assertIn("getMaximumWindowBounds()", inspector)
 
+    def test_adaptive_android_launcher_brand(self):
+        root = ROOT / "android-inspector/app/src/main"
+        manifest = (root / "AndroidManifest.xml").read_text(encoding="utf-8")
+        self.assertIn('android:icon="@mipmap/ic_launcher"', manifest)
+        self.assertIn('android:roundIcon="@mipmap/ic_launcher"', manifest)
+        self.assertTrue((root / "res/mipmap-anydpi/ic_launcher.xml").is_file())
+        adaptive = (root / "res/mipmap-anydpi-v26/ic_launcher.xml").read_text(encoding="utf-8")
+        self.assertIn("@drawable/ic_dexrive_foreground", adaptive)
+        self.assertIn("@color/dexrive_icon_background", adaptive)
+        foreground = (root / "res/drawable/ic_dexrive_foreground.xml").read_text(encoding="utf-8")
+        self.assertIn("#34D9D0", foreground)
+        self.assertIn("#F1F5F9", foreground)
+
     def test_legal_provenance_and_brand_credit(self):
         brand_notice = (ROOT / "BRAND_NOTICE.md").read_text(encoding="utf-8")
         self.assertIn("Brendigo", brand_notice)
