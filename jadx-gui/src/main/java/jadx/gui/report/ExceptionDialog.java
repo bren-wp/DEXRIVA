@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,7 +34,6 @@ import jadx.gui.settings.JadxSettings;
 import jadx.gui.settings.JadxSettingsData;
 import jadx.gui.ui.MainWindow;
 import jadx.gui.utils.LafManager;
-import jadx.gui.utils.Link;
 import jadx.gui.utils.NLS;
 import jadx.gui.utils.TextStandardActions;
 import jadx.gui.utils.UiUtils;
@@ -51,14 +48,14 @@ public class ExceptionDialog extends JDialog {
 	}
 
 	private ExceptionDialog(@Nullable MainWindow mainWindow, ExceptionData data) {
-		super(mainWindow, NLS.str("error.dialog.jadx_error_title"));
+		super(mainWindow, "DEXRIVA — Application error");
 		JPanel titlePanel = new JPanel(new BorderLayout());
-		JLabel titleLabel = new JLabel("<html><h2>" + NLS.str("error.dialog.exception_title") + "</h2></html>");
+		JLabel titleLabel = new JLabel("<html><h2>" + "DEXRIVA encountered an unexpected error" + "</h2></html>");
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titlePanel.add(titleLabel, BorderLayout.CENTER);
 
 		Map<String, String> details = new LinkedHashMap<>();
-		details.put("Jadx version", JadxDecompiler.getVersion());
+		details.put("Engine version", JadxDecompiler.getVersion());
 		details.put("Java version", JadxSystemInfo.JAVA_VER);
 		details.put("Java VM", String.format("%s %s",
 				System.getProperty("java.vm.vendor", "?"), System.getProperty("java.vm.name", "?")));
@@ -72,7 +69,6 @@ public class ExceptionDialog extends JDialog {
 			LOG.error("Failed to get program command line", t);
 		}
 		String stackTrace = Utils.getFullStackTrace(data.getException());
-		Link issueLink = buildNewIssueLink(data, details, stackTrace);
 
 		JTextArea messageArea = new JTextArea();
 		TextStandardActions.attach(messageArea);
@@ -101,9 +97,6 @@ public class ExceptionDialog extends JDialog {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-		if (issueLink != null) {
-			buttonPanel.add(issueLink);
-		}
 		buttonPanel.add(Box.createHorizontalGlue());
 		buttonPanel.add(exitButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -132,40 +125,6 @@ public class ExceptionDialog extends JDialog {
 
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
-	}
-
-	private static @Nullable Link buildNewIssueLink(ExceptionData data, Map<String, String> details, String stackTrace) {
-		String project = data.getGithubProject();
-		if (project.isEmpty()) {
-			return null;
-		}
-		Throwable ex = data.getException();
-		String issueTitle;
-		try {
-			issueTitle = URLEncoder.encode(ex.toString(), StandardCharsets.UTF_8);
-		} catch (Exception e) {
-			LOG.error("URL encoding of title failed", e);
-			issueTitle = ex.getClass().getSimpleName();
-		}
-
-		String message = "Please describe what you did before the error occurred.\n\n"
-				+ "**IMPORTANT!** If the error occurs with a specific APK file please attach or provide link to apk file!\n\n";
-
-		StringBuilder detailsIssueBuilder = new StringBuilder();
-		details.forEach((key, value) -> detailsIssueBuilder.append(String.format("* %s: %s\n", key, value)));
-
-		String body = String.format("%s%s\n```\n%s\n```", message, detailsIssueBuilder, stackTrace);
-
-		String issueBody;
-		try {
-			issueBody = URLEncoder.encode(body, StandardCharsets.UTF_8);
-		} catch (Exception e) {
-			LOG.error("URL encoding of body failed", e);
-			issueBody = "Please copy the displayed text in the Jadx error dialog and paste it here";
-		}
-		String url = String.format("https://github.com/%s/issues/new?labels=bug&title=%s&body=%s",
-				project, issueTitle, issueBody);
-		return new Link("<html><u><b>" + NLS.str("error.dialog.new_github_issue") + "</b></u></html>", url);
 	}
 
 	public static void throwTestException() {

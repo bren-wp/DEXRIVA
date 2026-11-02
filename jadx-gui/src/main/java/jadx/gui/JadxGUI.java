@@ -17,6 +17,7 @@ import jadx.gui.logs.LogCollector;
 import jadx.gui.settings.GuiConfigLocale;
 import jadx.gui.settings.JadxSettings;
 import jadx.gui.settings.JadxSettingsData;
+import jadx.gui.ui.DexrivaSplash;
 import jadx.gui.ui.MainWindow;
 import jadx.gui.utils.LafManager;
 
@@ -40,9 +41,20 @@ public class JadxGUI {
 			SwingUtilities.invokeLater(() -> {
 				LafManager.init(settings);
 				settings.getFontSettings().updateDefaultFont();
-				MainWindow mw = new MainWindow(settings);
-				registerOpenFileHandler(mw);
-				mw.init();
+				DexrivaSplash splash = new DexrivaSplash();
+				splash.setVisible(true);
+				SwingUtilities.invokeLater(() -> {
+					try {
+						MainWindow mw = new MainWindow(settings);
+						registerOpenFileHandler(mw);
+						mw.init();
+					} catch (RuntimeException e) {
+						LOG.error("DEXRIVA startup failed", e);
+						throw e;
+					} finally {
+						splash.dispose();
+					}
+				});
 			});
 		} catch (Exception e) {
 			LOG.error("Error: {}", e.getMessage(), e);
@@ -65,7 +77,7 @@ public class JadxGUI {
 
 	private static void printSystemInfo() {
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Starting jadx-gui: version: {}, bundle: {}. JVM: {} {}. OS: {}, version: {}, arch: {}",
+			LOG.debug("Starting DEXRIVA: engine version: {}, bundle: {}. JVM: {} {}. OS: {}, version: {}, arch: {}",
 					Jadx.getVersion(), JadxBuildInfo.getJadxBundleType(),
 					JadxSystemInfo.JAVA_VM, JadxSystemInfo.JAVA_VER,
 					JadxSystemInfo.OS_NAME, JadxSystemInfo.OS_VERSION, JadxSystemInfo.OS_ARCH);

@@ -29,15 +29,15 @@ public class AboutDialog extends JDialog {
 
 	public final void initUI() {
 		URL logoURL = getClass().getResource("/logos/dexriva-logo-48px.png");
-		Icon logo = new ImageIcon(logoURL, "JADX logo");
+		Icon logo = new ImageIcon(logoURL, "DEXRIVA icon");
 
 		JLabel name = new JLabel("DEXRIVA", logo, SwingConstants.CENTER);
 		name.setAlignmentX(0.5f);
 
-		JLabel desc = new JLabel("Android Code Explorer • Based on open-source JADX");
+		JLabel desc = new JLabel("Android Code Explorer  |  Local analysis");
 		desc.setAlignmentX(0.5f);
 
-		JLabel version = new JLabel("JADX engine version: " + JadxDecompiler.getVersion());
+		JLabel version = new JLabel("Engine build: " + JadxDecompiler.getVersion());
 		version.setAlignmentX(0.5f);
 
 		String javaVm = System.getProperty("java.vm.name");
@@ -78,7 +78,7 @@ public class AboutDialog extends JDialog {
 
 		setModalityType(ModalityType.APPLICATION_MODAL);
 
-		setTitle(NLS.str("about_dialog.title"));
+		setTitle("About DEXRIVA");
 		pack();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);

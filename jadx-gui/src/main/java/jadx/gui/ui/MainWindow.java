@@ -298,7 +298,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 		initEvents();
 
 		update();
-		checkForUpdate();
 	}
 
 	public void init() {
@@ -338,24 +337,6 @@ public class MainWindow extends JFrame implements IMainWindow {
 			}
 			tabsController.codeJump(cacheObject.getNodeCache().makeFrom(javaNode));
 		}
-	}
-
-	private void checkForUpdate() {
-		if (!settings.isCheckForUpdates()) {
-			return;
-		}
-		new JadxUpdate().check(settings.getJadxUpdateChannel(), release -> SwingUtilities.invokeLater(() -> {
-			switch (settings.getJadxUpdateChannel()) {
-				case STABLE:
-					updateLink.setUrl(JadxUpdate.JADX_RELEASES_URL);
-					break;
-				case UNSTABLE:
-					updateLink.setUrl(JadxUpdate.JADX_ARTIFACTS_URL);
-					break;
-			}
-			updateLink.setText(NLS.str("menu.update_label", release.getName()));
-			updateLink.setVisible(true);
-		}));
 	}
 
 	public void openFileDialog() {

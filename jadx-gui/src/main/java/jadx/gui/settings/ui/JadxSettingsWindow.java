@@ -61,7 +61,6 @@ import jadx.core.utils.StringUtils;
 import jadx.core.utils.exceptions.JadxRuntimeException;
 import jadx.gui.settings.JadxSettings;
 import jadx.gui.settings.JadxSettingsData;
-import jadx.gui.settings.JadxUpdateChannel;
 import jadx.gui.settings.LineNumbersMode;
 import jadx.gui.settings.XposedCodegenLanguage;
 import jadx.gui.settings.data.SaveOptionEnum;
@@ -707,9 +706,6 @@ public class JadxSettingsWindow extends JDialog {
 		useAltFileDialog.setSelected(settings.isUseAlternativeFileDialog());
 		useAltFileDialog.addItemListener(e -> settings.setUseAlternativeFileDialog(e.getStateChange() == ItemEvent.SELECTED));
 
-		JCheckBox update = new JCheckBox();
-		update.setSelected(settings.isCheckForUpdates());
-		update.addItemListener(e -> settings.setCheckForUpdates(e.getStateChange() == ItemEvent.SELECTED));
 
 		JCheckBox disableTooltipOnHover = new JCheckBox();
 		disableTooltipOnHover.setSelected(settings.isDisableTooltipOnHover());
@@ -736,12 +732,6 @@ public class JadxSettingsWindow extends JDialog {
 			mainWindow.loadSettings();
 		});
 
-		JComboBox<JadxUpdateChannel> updateChannel = new JComboBox<>(JadxUpdateChannel.values());
-		updateChannel.setSelectedItem(settings.getJadxUpdateChannel());
-		updateChannel.addActionListener(e -> {
-			settings.setJadxUpdateChannel((JadxUpdateChannel) updateChannel.getSelectedItem());
-			mainWindow.loadSettings();
-		});
 
 		SettingsGroup group = new SettingsGroup(NLS.str("preferences.other"));
 		group.addRow(NLS.str("preferences.lineNumbersMode"), lineNumbersMode);
@@ -752,8 +742,6 @@ public class JadxSettingsWindow extends JDialog {
 		group.addRow(NLS.str("preferences.cfg"), cfg);
 		group.addRow(NLS.str("preferences.raw_cfg"), rawCfg);
 		group.addRow(NLS.str("preferences.xposed_codegen_language"), xposedCodegenLanguage);
-		group.addRow(NLS.str("preferences.check_for_updates"), update);
-		group.addRow(NLS.str("preferences.update_channel"), updateChannel);
 		return group;
 	}
 
