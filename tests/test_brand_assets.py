@@ -97,8 +97,19 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertIn('versionName = "0.4.0"', android)
         self.assertIn('gh release create v1.3.0', release)
         self.assertIn('reactivecircus/android-emulator-runner@v2', capture)
-        self.assertIn('capture_windows_ui.ps1', capture)
+        # Both images are genuine application captures, not mocked UI screenshots.
+        # The follow-up workflow reuses a verified Windows artifact and records a
+        # fresh Android emulator framebuffer instead of rebuilding Windows twice.
+        self.assertIn('reactivecircus/android-emulator-runner@v2', capture)
+        self.assertIn('windows-gallery:', capture)
+        self.assertIn('Retrieve verified screenshot from the actual Windows GUI run', capture)
+        self.assertIn('capture_android_ui.sh', capture)
         self.assertIn('GetWindowRect', (ROOT / "scripts/capture_windows_ui.ps1").read_text(encoding="utf-8"))
+        for name in ("windows-home.png", "android-inspector-home.png"):
+            png = (ROOT / "docs/screenshots" / name).read_bytes()
+            self.assertTrue(png.startswith(bytes.fromhex("89504e470d0a1a0a")), name)
+            self.assertGreater(len(png), 15000, name)
+            self.assertIn("docs/screenshots/" + name, readme)
         self.assertIn('<!-- BEGIN DEXRIVE SCREENSHOTS -->', readme)
         self.assertIn('<!-- END DEXRIVE SCREENSHOTS -->', readme)
         self.assertIn('Concept art', readme)
