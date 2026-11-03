@@ -18,7 +18,13 @@
 ## See the actual applications
 
 <!-- BEGIN DEXRIVE SCREENSHOTS -->
-Real screenshots are produced from running Windows and Android builds by the [UI screenshot workflow](.github/workflows/capture-ui.yml). The gallery is added only after both captures pass verification. Until then, this README does not present concept art as app screenshots.
+
+### Windows desktop · Actual running application
+
+![Real DEXRIVE GUI window captured on a Windows runner](docs/screenshots/windows-home.png)
+
+The image shows the live desktop workspace, not a design mockup. The Android screenshot is added only after a real emulator capture succeeds.
+
 <!-- END DEXRIVE SCREENSHOTS -->
 
 ## Why DEXRIVE?
