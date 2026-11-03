@@ -1,0 +1,141 @@
+name: Capture genuine DEXRIVE application screenshots
+on:
+  push:
+    branches: [feature/dexrive-v1.3-release-marketing-screenshots]
+    paths:
+      - '.github/workflows/capture-ui.yml'
+      - 'scripts/capture_windows_ui.ps1'
+      - 'android-inspector/**'
+      - 'dexrive-gui/**'
+      - 'README.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  windows-ui:
+    runs-on: windows-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build real Windows GUI
+        shell: pwsh
+        run: |
+          python .dexrive/make_windows_ico.py
+          .\gradlew.bat --no-daemon :dexrive-gui:copyDistWinWithJre -PbundleJRE=true
+      - name: Start app and capture real desktop window
+        shell: pwsh
+        run: |
+          .\scripts\capture_windows_ui.ps1 -Launcher 'dexrive-gui/build/dexrive-gui-with-jre-win/DEXRIVE.exe' -Output 'docs/screenshots/windows-home.png'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dexrive-shot-windows
+          path: docs/screenshots/windows-home.png
+          if-no-files-found: error
+
+  android-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build actual Android APK
+        working-directory: android-inspector
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug
+      - name: Launch Android application in emulator and capture pixels
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            mkdir -p docs/screenshots
+            adb install -r android-inspector/app/build/outputs/apk/debug/app-debug.apk
+            adb shell am start -W -n com.brendigo.dexrive.inspector/.MainActivity
+            sleep 8
+            adb exec-out screencap -p > docs/screenshots/android-inspector-home.png
+            python3 - <<'PY'
+            import pathlib, struct
+            p = pathlib.Path("docs/screenshots/android-inspector-home.png")
+            image = p.read_bytes()
+            assert image.startswith(bytes.fromhex("89504e470d0a1a0a")), "No real PNG framebuffer received"
+            assert len(image) > 15000, "Emulator image is blank or truncated"
+            width, height = struct.unpack(">II", image[16:24])
+            assert width >= 360 and height >= 640, (width, height)
+            print(f"Captured real Android display: {width}x{height}")
+            PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dexrive-shot-android
+          path: docs/screenshots/android-inspector-home.png
+          if-no-files-found: error
+
+  screenshot-gallery:
+    needs: [windows-ui, android-ui]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/dexrive-v1.3-release-marketing-screenshots
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dexrive-shot-*
+          path: docs/screenshots
+          merge-multiple: true
+      - name: Validate screenshot files and update README without fabricated images
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          screenshots = {
+              "windows-home.png": "Windows home screen",
+              "android-inspector-home.png": "Android APK Inspector home screen",
+          }
+          for name in screenshots:
+              p = Path("docs/screenshots") / name
+              data = p.read_bytes()
+              assert data[:8] == bytes.fromhex("89504e470d0a1a0a"), name
+              assert len(data) > 15000, f"Screenshot missing display pixels: {name}"
+          f = Path("README.md")
+          source = f.read_text()
+          begin, end = "<!-- BEGIN DEXRIVE SCREENSHOTS -->", "<!-- END DEXRIVE SCREENSHOTS -->"
+          assert source.count(begin) == source.count(end) == 1
+          content = """<!-- BEGIN DEXRIVE SCREENSHOTS -->
+          ### Windows desktop · Running DEXRIVE
+
+          ![Actual DEXRIVE desktop GUI screenshot captured from Windows runner](docs/screenshots/windows-home.png)
+
+          ### Android · Running DEXRIVE Inspector
+
+          ![Actual DEXRIVE Android Inspector screenshot captured from Pixel emulator](docs/screenshots/android-inspector-home.png)
+
+          *These are actual framebuffer captures of CI-launched applications, not renders or concept illustrations. The Android screenshot is of the home screen without a selected package.*
+          <!-- END DEXRIVE SCREENSHOTS -->"""
+          content = "\n".join(line.strip() if line.startswith("          ") else line for line in content.splitlines())
+          a = source.index(begin)
+          b = source.index(end, a) + len(end)
+          f.write_text(source[:a] + content + source[b:])
+          PY
+      - name: Commit verified screenshots to PR branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md docs/screenshots/windows-home.png docs/screenshots/android-inspector-home.png
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "docs: capture real Windows and Android application screenshots [skip ci]"
+          git push origin HEAD:feature/dexrive-v1.3-release-marketing-screenshots

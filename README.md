@@ -1,93 +1,84 @@
 <div align="center">
-<img src="assets/dexrive-banner.svg" width="100%" alt="DEXRIVE — Brendigo Android Code Explorer" />
+  <img src="assets/dexrive-banner.svg" alt="DEXRIVE — Android code explorer by Brendigo" width="100%">
+  <p><strong>DEXRIVE</strong> · Explore beyond the source.</p>
+  <p>
+    <a href="https://github.com/bren-wp/DEXRIVA/releases">Download</a> ·
+    <a href="https://brendigo.com">Brendigo</a> ·
+    <a href="docs/BRAND_GUIDELINES.md">Design system</a> ·
+    <a href="docs/MODULE_MIGRATION.md">Compatibility</a>
+  </p>
 </div>
 
-<div align="center">
-<strong>DEXRIVE</strong> · <a href="https://brendigo.com">brendigo.com</a> · <a href="https://github.com/bren-wp/DEXRIVA/releases">Downloads</a> · <a href="docs/BRAND_GUIDELINES.md">Brand guide</a>
-</div>
+# An Android explorer built for focus.
 
-# DEXRIVE — Explore beyond the source.
+**DEXRIVE by Brendigo** brings package inspection, decompilation and code exploration into a cohesive, local-first desktop workspace, with a lightweight Android companion for inspecting archive metadata directly on your device.
 
-**By Brendigo.** An elegant, local-first workspace for exploring Android packages, resources, and bytecode. Original brand, interface artwork, packaging and product enhancements developed for DEXRIVE by Brendigo.
+**Latest stable release:** [DEXRIVE 1.2.0](https://github.com/bren-wp/DEXRIVA/releases/tag/v1.2.0) · **Next release:** 1.3.0, in validation. Release assets are published only after successful builds. The Android Inspector is a companion app, **not** the full desktop decompiler.
 
-**Release status:** DEXRIVE v1.1.0 for Windows is published. The next v1.2.0 release migrates the Gradle module layout and Android preview namespace and remains under CI review. The illustrations below are *design concepts*, not screenshots of a running release.
+## See the actual applications
 
-<table>
-<tr>
-<td width="33%" align="center"><img src="assets/feature-inspect.svg" width="210" alt="APK Inspector illustration"/><b>APK Inspector</b><p>Inspect ZIP headers, DEX entries and native libraries locally.</p></td>
-<td width="33%" align="center"><img src="assets/feature-code.svg" width="210" alt="Code Explorer illustration"/><b>Code Explorer</b><p>Navigate Java classes, references, packages and Android resources.</p></td>
-<td width="33%" align="center"><img src="assets/feature-privacy.svg" width="210" alt="Local-first illustration"/><b>Local-first</b><p>Use desktop analysis features without uploading project content.</p></td>
-</tr>
-</table>
+<!-- BEGIN DEXRIVE SCREENSHOTS -->
+Real screenshots are produced from running Windows and Android builds by the [UI screenshot workflow](.github/workflows/capture-ui.yml). The gallery is added only after both captures pass verification. Until then, this README does not present concept art as app screenshots.
+<!-- END DEXRIVE SCREENSHOTS -->
 
-## Design preview
+## Why DEXRIVE?
 
-<img src="assets/dexrive-workspace-concept.svg" width="100%" alt="DEXRIVE desktop Workspace concept illustration" />
+| Explore | Inspect | Stay in control |
+| --- | --- | --- |
+| Navigate DEX bytecode, decompiled Java classes, references and Android resources on Windows. | Examine APK/AAB/archive structure, native libraries, manifests and heuristic warnings locally. | Use offline inspection without uploading package content to a third-party service. |
 
-*Illustrative UI composition, **not an actual application screenshot**. Real Windows UI screenshots require capture from a running build and visual review.*
+The desktop decompilation engine derives from the open-source JADX project. The product identity, visual system and custom enhancements are developed for DEXRIVE by **Brendigo**.
 
-## Features
+## Made for the way you work
 
-- **Android decompilation:** explore DEX and APK source representations with the integrated open-source engine.
-- **Code intelligence:** search classes, text and references, review source tabs, annotations and available deobfuscation.
-- **Resources and manifests:** browse package content, XML and supported resource formats.
-- **Offline APK Inspector:** count ZIP entries, DEX files, native libraries and suspicious archive paths locally. This is not a malware scanner or signing verification.
-- **Desktop experience:** branded dark UI, original SVG icons, responsive landing workspace and native Windows packaging.
-- **Android preview:** a separate, minimal Kotlin/Jetpack Compose APK Inspector under android-inspector/.
+**Windows desktop.** Open a package or previous project from the start screen, explore classes and resources in a tabbed code workspace, and use the built-in APK Inspector to check archive metadata before deeper analysis.
 
-## Windows editions
+**Android companion.** Open a document through the Android system picker. Review entry counts, DEX/native-library statistics and archive warnings in accessible cards, then copy the SHA-256 digest for reference. The app processes files locally and temporarily caches the selected archive; it does not send files to a remote service. Inspection is limited to archive metadata and **does not** validate APK signatures or detect malware.
 
-| Edition | Installation and behavior |
-| --- | --- |
-| **Setup.exe** | DEXRIVE-branded welcome screen, Apache 2.0 license acceptance, directory choice, optional shortcuts and uninstall support |
-| **Portable.exe** | No setup wizard, shortcut or registry writes. Unpacks beside the launcher on first run, then opens the app. |
+**Automation.** Run `dexrive --help` or `dexrive -d output app.apk`. DEXRIVE-branded environment variables such as `DEXRIVE_CACHE_DIR` and `DEXRIVE_CONFIG_DIR` are supported, while inherited `JADX_*` aliases remain for interoperability.
 
-Both bundle a compatible Java runtime. The installer and portable files are built and tested via GitHub Actions before release. **DEXRIVE 1.1.0 setup and portable builds are published.** Release 1.2.0 is configured to publish Windows setup, portable and Android debug APK / unsigned AAB only after both platforms pass CI. The current Windows binaries are unsigned (no Authenticode certificate). Android debug APKs and unsigned AABs are for development and require production signing before Google Play distribution.
+## Downloads
 
-## Command-line edition
+| Platform | Build | What to expect |
+| --- | --- | --- |
+| **Windows 10/11** | `DEXRIVE-1.3.0-setup.exe` | Branded installer, per-user setup, shortcuts, uninstall support and bundled Java runtime |
+| **Windows 10/11** | `DEXRIVE-1.3.0-portable.exe` | Self-extracting standalone distribution; first run requires a writable folder |
+| **Android 7.0+** | `DEXRIVE-APK-Inspector-0.4.0-debug.apk` | Debug-key-signed APK for testing, not a production Play Store build |
+| **Android 7.0+** | `DEXRIVE-APK-Inspector-0.4.0-unsigned.aab` | Unsigned release bundle; **requires the legitimate app signing key** for Google Play |
 
-DEXRIVE also provides a local CLI for scripts and automated analysis. The user-facing command is `dexrive` (not the inherited launcher name):
+**1.3.0 is not available until it appears under [GitHub Releases](https://github.com/bren-wp/DEXRIVA/releases).** Until then, use [v1.2.0](https://github.com/bren-wp/DEXRIVA/releases/tag/v1.2.0). Windows installers currently lack an Authenticode signature. SHA-256 checksums are published with each release.
 
-```sh
-dexrive --help
-dexrive -d output app.apk
-dexrive --log-level ERROR app.apk
-```
+## Design language
 
-Use the `DEXRIVE_` environment variable prefix, for example `DEXRIVE_CONFIG_DIR`, `DEXRIVE_CACHE_DIR`, `DEXRIVE_TMP_DIR` and `DEXRIVE_ZIP_MAX_ENTRIES_COUNT`. The DEXRIVE names take precedence when both new and inherited variable names are configured. The inherited `JADX_` aliases remain accepted for existing scripts and plug-ins. **Keep ZIP and XML security checks enabled for untrusted input.**
+**Midnight** `#101927` · **Slate** `#172A3F` · **Aqua** `#34D9D0` · **Cloud** `#F1F5F9`.
 
-The underlying binary APIs, class names and legacy project file formats have intentionally not been bulk-renamed. Changing them without compatibility adapters would break existing files and extensions; see [module migration notes](docs/MODULE_MIGRATION.md).
+A unified DEXRIVE mark, splash, workspace, installer and Android adaptive icon are built around this system. The UI is responsive, uses scalable text and preserves keyboard-accessible desktop actions. Visual parity is verified only against screenshots of actual running builds.
 
-## Brand identity
+<details>
+<summary>Brand concept illustrations (not screenshots)</summary>
 
-| Property | Identity |
-| --- | --- |
-| Product | **DEXRIVE** |
-| Brand author and product maintainer | **Brendigo** |
-| Website | **[brendigo.com](https://brendigo.com)** |
-| Slogan | **Explore beyond the source.** |
-| Primary colors | Midnight #101927 · Aqua #34D9D0 · Cloud #F1F5F9 |
-| Design assets | [Launcher icon](assets/dexrive-mark.svg), [Hero banner](assets/dexrive-banner.svg), [Workspace concept](assets/dexrive-workspace-concept.svg) |
+<img src="assets/dexrive-workspace-concept.svg" width="100%" alt="DEXRIVE concept illustration — not a running app screenshot" />
 
-The product brand and newly authored visuals are Brendigo's work. They do not assert sole copyright over the incorporated decompilation engine.
+Concept art shows visual direction only; the screenshot gallery above is captured from running applications.
 
-## Build from source
+</details>
 
-Requires **JDK 21** for desktop builds. Run:
+## Build and development
 
-    ./gradlew :dexrive-gui:test :dexrive-core:test
-    ./gradlew :dexrive-gui:run
+**Desktop:** JDK 21; `./gradlew :dexrive-gui:test :dexrive-core:test :dexrive-cli:test` and `./gradlew :dexrive-gui:run`.
 
-All major Gradle modules and source repository top-level folders use `dexrive-*` names. Historical Java namespaces and selected runtime identifiers remain for binary compatibility. See [migration notes](docs/MODULE_MIGRATION.md). User-facing product naming is DEXRIVE.
+**Android:** Open `android-inspector/` in Android Studio or run `cd android-inspector && ./gradlew :app:testDebugUnitTest :app:assembleDebug` (JDK 17 plus Android SDK).
 
-## Privacy and security
+**Releases and trust.** CI runs code tests, Windows installer/portable smoke tests and Android APK/AAB builds. UI screenshots have a separate workflow and are not accepted if capture fails. A production Android AAB needs the app owner's signing credentials; a debug APK is **never** a production-signed release.
 
-Archive inspection reads local ZIP metadata without extracting or executing the APK. Decompilation input is untrusted; run suspicious applications or archives in an isolated environment. The tool cannot guarantee exact original Java source recovery, and metadata heuristics are **not** evidence of malware or a cryptographic signature check. User-visible GitHub prompts from the original application are removed from the DEXRIVE UI.
+## Privacy, security and compatibility
 
-## Legal, notices and credits
+Archive inputs are untrusted. DEXRIVE's inspector reads ZIP metadata without extracting or executing archive entries; heuristic flags are not malware diagnoses. For suspicious files, use an isolated environment. The decompiler cannot guarantee recreation of original source code.
 
-**Original DEXRIVE branding and custom product materials: © 2026 Brendigo.** See [BRAND_NOTICE.md](BRAND_NOTICE.md).
+The internal `jadx.*` packages and saved-project formats remain intentionally compatible with upstream formats; sweeping their identifiers into a new namespace would break existing plug-ins and user projects. See [module migration notes](docs/MODULE_MIGRATION.md).
 
-DEXRIVE includes software derived from the open-source JADX project by skylot and other contributors under Apache License 2.0. Their required rights and notices are retained in [LICENSE](LICENSE) and [NOTICE](NOTICE). The original project is credited for its underlying engine. DEXRIVE is a separate product and is not an official upstream release.
+## Brendigo and legal
 
-Original bundled dependencies may have their own licenses. This notice does not erase their author names, copyright headers or permitted rights.
+**DEXRIVE** · Created and maintained as a branded product by **Brendigo** · [brendigo.com](https://brendigo.com).
+
+Original product design and newly authored DEXRIVE assets © 2026 Brendigo. The included core decompiler contains work by upstream JADX contributors under Apache License 2.0. Their legally required copyright and attribution remain in [LICENSE](LICENSE) and [NOTICE](NOTICE); [BRAND_NOTICE.md](BRAND_NOTICE.md) describes Brendigo additions. This is an independent branded distribution, not an official upstream JADX release.
