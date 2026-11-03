@@ -22,16 +22,26 @@ try {
     $found = $null
     for ($i = 0; $i -lt 90; $i++) {
         Start-Sleep -Seconds 1
-        $matches = @(Get-Process | Where-Object {
+        # Launch4j starts a child javaw process and exits with code 0. That is normal.
+        # Wait for the real JFrame, not the launcher process or its small splash.
+        $candidates = @(Get-Process | Where-Object {
             $_.MainWindowHandle -ne [IntPtr]::Zero -and
-            $_.MainWindowTitle -match 'DEXRIVE' -and
-            ($_.ProcessName -match 'DEXRIVE|java|javaw')
+            ($_.ProcessName -match 'DEXRIVE|javaw|java') -and
+            $_.MainWindowTitle -match 'DEXRIVE'
         })
-        if ($matches.Count -gt 0) {
-            $found = $matches[0]
-            break
+        foreach ($candidate in $candidates) {
+            $bounds = [DexriveCaptureNative+Rect]::new()
+            if ([DexriveCaptureNative]::GetWindowRect($candidate.MainWindowHandle, [ref]$bounds)) {
+                $w = $bounds.Right - $bounds.Left
+                $h = $bounds.Bottom - $bounds.Top
+                if ($w -ge 500 -and $h -ge 350) {
+                    $found = $candidate
+                    Write-Host "Real GUI detected: $($candidate.ProcessName) [$($candidate.MainWindowTitle)] $w x $h"
+                    break
+                }
+            }
         }
-        if ($process.HasExited) { throw "DEXRIVE exited before opening its GUI: $($process.ExitCode)" }
+        if ($null -ne $found) { break }
     }
     if ($null -eq $found) { throw 'No real DEXRIVE main window was found; refusing to use a mock screenshot.' }
     [DexriveCaptureNative]::ShowWindow($found.MainWindowHandle, 9) | Out-Null
