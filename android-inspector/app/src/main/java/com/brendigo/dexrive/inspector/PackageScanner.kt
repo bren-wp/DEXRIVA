@@ -15,12 +15,17 @@ internal data class ZipStats(val entries: Int, val dex: Int, val native: Int,
     val manifest: Boolean, val traversal: Int, val highCompression: Int, val truncated: Boolean)
 object PackageScanner {
     private const val LIMIT_BYTES = 512L * 1024 * 1024
+    // The document provider controls DISPLAY_NAME. Keep its label single-line and bounded.
+    internal fun sanitizeDisplayName(value: String?): String {
+        val cleaned = value?.filterNot { Character.isISOControl(it) }?.trim()?.take(160)
+        return if (cleaned.isNullOrEmpty()) "Android package" else cleaned
+    }
     internal fun inspect(context: Context, uri: Uri): PackageReport {
-        val name = runCatching {
+        val name = sanitizeDisplayName(runCatching {
             context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use {
                 if (it.moveToFirst()) it.getString(0) else null
             }
-        }.getOrNull() ?: "Android package"
+        }.getOrNull())
         val tmp = File.createTempFile("dexrive-", ".zip", context.cacheDir)
         try {
             val hash = MessageDigest.getInstance("SHA-256")

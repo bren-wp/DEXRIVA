@@ -8,37 +8,40 @@ import java.util.zip.ZipOutputStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static java.nio.file.Files.newOutputStream;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DexriveInspectorTest {
+/** Verifies local, non-executing archive metadata analysis for the DEXRIVE desktop inspector. */
+public class DexriveInspectorTest {
+
     @TempDir
-    Path temp;
+    Path dir;
 
     @Test
-    void inspectsZipEntriesLocally() throws IOException {
-        Path archive = temp.resolve("fixture.apk");
-        try (ZipOutputStream zip = new ZipOutputStream(newOutputStream(archive))) {
-            add(zip, "classes.dex");
-            add(zip, "classes2.dex");
-            add(zip, "AndroidManifest.xml");
-            add(zip, "resources.arsc");
-            add(zip, "lib/arm64-v8a/libfixture.so");
-            add(zip, "META-INF/CERT.RSA");
-            add(zip, "../outside.txt");
+    public void reportsMetadataAndTraversalWarnings() throws IOException {
+        Path archive = dir.resolve("sample.apk");
+        try (ZipOutputStream zip = new ZipOutputStream(java.nio.file.Files.newOutputStream(archive))) {
+            for (String name : new String[] {
+                    "classes.dex", "AndroidManifest.xml", "lib/arm64-v8a/libdemo.so", "../escape.txt" }) {
+                zip.putNextEntry(new ZipEntry(name));
+                zip.write(new byte[] {1, 2, 3});
+                zip.closeEntry();
+            }
         }
+
         String report = DexriveInspector.inspect(archive);
-        assertThat(report).contains("DEX files: 2");
-        assertThat(report).contains("Native libraries: 1");
-        assertThat(report).contains("Android manifest found: true");
-        assertThat(report).contains("resources.arsc found: true");
-        assertThat(report).contains("Entries with traversal-like names: 1");
-        assertThat(report).contains("NOT a malware verdict");
+        assertTrue(report.contains("DEXRIVE | LOCAL ARCHIVE INSPECTION"));
+        assertTrue(report.contains("ZIP entries inspected: 4"));
+        assertTrue(report.contains("DEX files: 1"));
+        assertTrue(report.contains("Native libraries: 1"));
+        assertTrue(report.contains("Android manifest found: true"));
+        assertTrue(report.contains("Entries with traversal-like names: 1"));
+        assertTrue(report.contains("No archive entries were extracted or executed."));
+        assertTrue(report.contains("NOT a malware verdict"));
     }
 
-    private static void add(ZipOutputStream zip, String name) throws IOException {
-        zip.putNextEntry(new ZipEntry(name));
-        zip.write(new byte[] { 1, 2, 3, 4 });
-        zip.closeEntry();
+    @Test
+    public void rejectsMissingFile() {
+        assertThrows(IOException.class, () -> DexriveInspector.inspect(dir.resolve("not-found.apk")));
     }
 }
