@@ -175,6 +175,16 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertIn("#34D9D0", foreground)
         self.assertIn("#F1F5F9", foreground)
 
+    def test_android_startup_theme_matches_brand(self):
+        res = ROOT / "android-inspector/app/src/main/res"
+        manifest = (ROOT / "android-inspector/app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
+        theme = (res / "values/styles.xml").read_text(encoding="utf-8")
+        splash = (res / "values-v31/styles.xml").read_text(encoding="utf-8")
+        self.assertIn('@style/Theme.Dexrive', manifest)
+        self.assertIn('@color/dexrive_icon_background', theme)
+        self.assertIn('windowSplashScreenBackground', splash)
+        self.assertIn('windowSplashScreenAnimatedIcon', splash)
+
     def test_legal_provenance_and_brand_credit(self):
         brand_notice = (ROOT / "BRAND_NOTICE.md").read_text(encoding="utf-8")
         self.assertIn("Brendigo", brand_notice)
