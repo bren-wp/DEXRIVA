@@ -11,7 +11,7 @@
 
 # An Android explorer built for focus.
 
-**DEXRIVE by Brendigo** brings package inspection, decompilation and code exploration into a cohesive, local-first desktop workspace, with a lightweight Android companion for inspecting archive metadata directly on your device.
+**By Brendigo.** DEXRIVE brings package inspection, decompilation and code exploration into a cohesive, local-first desktop workspace, with a lightweight Android companion for inspecting archive metadata directly on your device.
 
 **Latest stable release:** [DEXRIVE 1.2.0](https://github.com/bren-wp/DEXRIVA/releases/tag/v1.2.0) · **Next release:** 1.3.0, in validation. Release assets are published only after successful builds. The Android Inspector is a companion app, **not** the full desktop decompiler.
 

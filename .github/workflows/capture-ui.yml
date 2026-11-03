@@ -7,8 +7,10 @@ on:
       - 'scripts/capture_windows_ui.ps1'
       - 'android-inspector/**'
       - 'dexrive-gui/**'
-      - 'README.md'
   workflow_dispatch:
+concurrency:
+  group: dexrive-capture-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 
