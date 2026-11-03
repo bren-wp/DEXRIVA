@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/capture-ui.yml'
       - 'android-inspector/**'
+      - 'scripts/capture_android_ui.sh'
   workflow_dispatch:
 permissions:
   contents: read
@@ -99,26 +100,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: |
-            mkdir -p docs/screenshots
-            adb shell getprop sys.boot_completed
-            for n in 1 2 3 4 5 6; do
-              if adb install -r android-inspector/app/build/outputs/apk/debug/app-debug.apk; then break; fi
-              sleep 12
-            done
-            adb shell pm list packages com.brendigo.dexrive.inspector | grep 'com.brendigo.dexrive.inspector'
-            adb shell am start -W -n com.brendigo.dexrive.inspector/.MainActivity
-            sleep 8
-            adb exec-out screencap -p > docs/screenshots/android-inspector-home.png
-            python3 - <<'PY'
-            from pathlib import Path
-            import struct
-            png = Path('docs/screenshots/android-inspector-home.png').read_bytes()
-            assert png[:8] == bytes.fromhex('89504e470d0a1a0a') and len(png) > 15000
-            w, h = struct.unpack('>II', png[16:24])
-            assert w >= 360 and h >= 640
-            print(f'Genuine Android display captured: {w} x {h}')
-            PY
+          script: bash scripts/capture_android_ui.sh
       - uses: actions/upload-artifact@v4
         with:
           name: dexrive-shot-android
