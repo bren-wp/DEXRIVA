@@ -8,11 +8,13 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,7 +22,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.KeyStroke;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -70,6 +74,7 @@ public class StartPagePanel extends ContentPanel {
         top.setOpaque(false);
         JLabel logo = new JLabel(new ImageIcon(UiUtils.openImage("/logos/dexrive-logo-48px.png")));
         logo.getAccessibleContext().setAccessibleDescription("DEXRIVE brand mark");
+        logo.setHorizontalAlignment(JLabel.CENTER);
         top.add(logo, BorderLayout.WEST);
         JPanel headings = new JPanel();
         headings.setOpaque(false);
@@ -109,8 +114,20 @@ public class StartPagePanel extends ContentPanel {
         recentList = new RecentProjectsJList(recentListModel);
         recentList.setCellRenderer(new RecentProjectListCellRenderer(font));
         recentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        recentList.getInputMap(JComponent.WHEN_FOCUSED)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "openRecentProject");
+        recentList.getActionMap().put("openRecentProject", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent event) {
+                RecentProjectItem selected = recentList.getSelectedValue();
+                if (selected != null) {
+                    mainWindow.open(selected.getPath());
+                }
+            }
+        });
         recentList.setFixedCellHeight(Math.max(54, font.getSize() * 4));
         recentList.getAccessibleContext().setAccessibleName("Recent projects");
+        recentList.getAccessibleContext().setAccessibleDescription("Select a project and press Enter to open it.");
         recentList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -181,13 +198,31 @@ public class StartPagePanel extends ContentPanel {
 
         addComponentListener(new ComponentAdapter() {
             private boolean narrow;
+            private boolean compact;
             @Override
             public void componentResized(ComponentEvent event) {
-                boolean useNarrow = getWidth() < 680;
+                int width = getWidth();
+                if (width <= 0) {
+                    return;
+                }
+                // Three action tiles need room for icon, title and detail text at high DPI.
+                boolean useNarrow = width < 900;
+                boolean useCompact = width < 490;
                 if (useNarrow != narrow) {
                     narrow = useNarrow;
                     actionGrid.setLayout(new GridLayout(narrow ? 3 : 1, narrow ? 1 : 3, 12, 12));
                     actionGrid.revalidate();
+                }
+                if (useCompact != compact) {
+                    compact = useCompact;
+                    top.remove(logo);
+                    top.add(logo, compact ? BorderLayout.NORTH : BorderLayout.WEST);
+                    caption.setText(compact ? "by Brendigo" : "Explore beyond the source.  •  by Brendigo");
+                    title.setFont(font.deriveFont(Font.BOLD,
+                            compact ? Math.max(23f, font.getSize2D() * 1.75f)
+                                    : Math.max(28f, font.getSize2D() * 2.25f)));
+                    top.revalidate();
+                    top.repaint();
                 }
             }
         });

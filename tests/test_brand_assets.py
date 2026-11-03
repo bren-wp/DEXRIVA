@@ -138,6 +138,53 @@ class BrandIntegrationTest(unittest.TestCase):
         self.assertIn('"DEXRIVE_" + varName.substring', helper)
         self.assertIn("return System.getenv(varName);", helper)
 
+    def test_android_responsive_ui_and_accessibility(self):
+        activity = (ROOT / "android-inspector/app/src/main/java/com/brendigo/dexrive/inspector/MainActivity.kt").read_text(encoding="utf-8")
+        for label in (
+            "DEXRIVE", "by Brendigo", "brendigo.com",
+            "Open Android package", "Copy SHA-256", "INSPECTION COMPLETE",
+            "widthIn(max = 720.dp)", "verticalScroll(rememberScrollState())",
+            "BoxWithConstraints", "SnackbarHost",
+            "semantics(mergeDescendants = true)", "Cancel",
+        ):
+            # The app must handle cancellation as well as readable, scalable cards.
+            self.assertIn(label if label != "Cancel" else "CancellationException", activity)
+
+    def test_windows_responsive_ui_and_cancelable_inspection(self):
+        start = (ROOT / "dexrive-gui/src/main/java/jadx/gui/ui/startpage/StartPagePanel.java").read_text(encoding="utf-8")
+        inspector = (ROOT / "dexrive-gui/src/main/java/jadx/gui/ui/dialog/DexriveInspector.java").read_text(encoding="utf-8")
+        self.assertIn("width < 900", start)
+        self.assertIn("width < 490", start)
+        self.assertIn("KeyEvent.VK_ENTER", start)
+        self.assertIn("openRecentProject", start)
+        self.assertIn("worker.cancel(true)", inspector)
+        self.assertIn("Thread.currentThread().isInterrupted()", inspector)
+        self.assertIn("UiUtils.setWindowIcons(dialog)", inspector)
+        self.assertIn("getMaximumWindowBounds()", inspector)
+
+    def test_adaptive_android_launcher_brand(self):
+        root = ROOT / "android-inspector/app/src/main"
+        manifest = (root / "AndroidManifest.xml").read_text(encoding="utf-8")
+        self.assertIn('android:icon="@mipmap/ic_launcher"', manifest)
+        self.assertIn('android:roundIcon="@mipmap/ic_launcher"', manifest)
+        self.assertTrue((root / "res/mipmap-anydpi/ic_launcher.xml").is_file())
+        adaptive = (root / "res/mipmap-anydpi-v26/ic_launcher.xml").read_text(encoding="utf-8")
+        self.assertIn("@drawable/ic_dexrive_foreground", adaptive)
+        self.assertIn("@color/dexrive_icon_background", adaptive)
+        foreground = (root / "res/drawable/ic_dexrive_foreground.xml").read_text(encoding="utf-8")
+        self.assertIn("#34D9D0", foreground)
+        self.assertIn("#F1F5F9", foreground)
+
+    def test_android_startup_theme_matches_brand(self):
+        res = ROOT / "android-inspector/app/src/main/res"
+        manifest = (ROOT / "android-inspector/app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
+        theme = (res / "values/styles.xml").read_text(encoding="utf-8")
+        splash = (res / "values-v31/styles.xml").read_text(encoding="utf-8")
+        self.assertIn('@style/Theme.Dexrive', manifest)
+        self.assertIn('@color/dexrive_icon_background', theme)
+        self.assertIn('windowSplashScreenBackground', splash)
+        self.assertIn('windowSplashScreenAnimatedIcon', splash)
+
     def test_legal_provenance_and_brand_credit(self):
         brand_notice = (ROOT / "BRAND_NOTICE.md").read_text(encoding="utf-8")
         self.assertIn("Brendigo", brand_notice)

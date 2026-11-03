@@ -8,6 +8,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PackageScannerTest {
+    @Test fun sanitizeUntrustedDisplayName() {
+        assertEquals("Android package", PackageScanner.sanitizeDisplayName("  "))
+        assertEquals("sample.apk", PackageScanner.sanitizeDisplayName("  sample.apk  "))
+        assertEquals(160, PackageScanner.sanitizeDisplayName("x".repeat(250)).length)
+        assertEquals("demo.apk", PackageScanner.sanitizeDisplayName("demo.apk\n\t"))
+    }
+
     @Test fun inspectSyntheticApk() {
         val file = File.createTempFile("dexrive-test", ".apk")
         try {
