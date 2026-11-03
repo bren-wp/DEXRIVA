@@ -13,7 +13,7 @@
 
 **By Brendigo.** DEXRIVE brings package inspection, decompilation and code exploration into a cohesive, local-first desktop workspace, with a lightweight Android companion for inspecting archive metadata directly on your device.
 
-**Latest stable release:** [DEXRIVE 1.2.0](https://github.com/bren-wp/DEXRIVA/releases/tag/v1.2.0) · **Next release:** 1.3.0, in validation. Release assets are published only after successful builds. The Android Inspector is a companion app, **not** the full desktop decompiler.
+**Published downloads:** [GitHub Releases](https://github.com/bren-wp/DEXRIVA/releases) · **This source update:** DEXRIVE 1.3.0 for Windows and Android Inspector 0.4.0. Refer to the Releases page to verify which versions are available. The Android Inspector is a companion app, **not** the full desktop decompiler.
 
 ## See the actual applications
 
@@ -56,7 +56,7 @@ The desktop decompilation engine derives from the open-source JADX project. The 
 | **Android 7.0+** | `DEXRIVE-APK-Inspector-0.4.0-debug.apk` | Debug-key-signed APK for testing, not a production Play Store build |
 | **Android 7.0+** | `DEXRIVE-APK-Inspector-0.4.0-unsigned.aab` | Unsigned release bundle; **requires the legitimate app signing key** for Google Play |
 
-**1.3.0 is not available until it appears under [GitHub Releases](https://github.com/bren-wp/DEXRIVA/releases).** Until then, use [v1.2.0](https://github.com/bren-wp/DEXRIVA/releases/tag/v1.2.0). Windows installers currently lack an Authenticode signature. SHA-256 checksums are published with each release.
+**Availability and integrity:** Check [GitHub Releases](https://github.com/bren-wp/DEXRIVA/releases) for published binaries and SHA-256 checksums. Windows installers currently lack an Authenticode signature. Android debug APKs are test builds and unsigned AABs require the owner's legitimate production upload key.
 
 ## Design language
 
