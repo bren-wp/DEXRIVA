@@ -23,7 +23,11 @@
 
 ![Real DEXRIVE GUI window captured on a Windows runner](docs/screenshots/windows-home.png)
 
-The image shows the live desktop workspace, not a design mockup. The Android screenshot is added only after a real emulator capture succeeds.
+### Android · Actual running companion application
+
+![Real DEXRIVE Inspector home screen captured on Android emulator](docs/screenshots/android-inspector-home.png)
+
+*Both images come from compiled, launched applications. These are not illustrations or design mockups; the Android screenshot shows the home screen without a selected APK.*
 
 <!-- END DEXRIVE SCREENSHOTS -->
 
